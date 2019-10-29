@@ -6,9 +6,12 @@ import {
   Delete,
   Body,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { PostDTO } from './post.dto';
+import { AuthGuard } from '../shared/auth.guard';
+import { User } from '../user/user.decorator';
 
 @Controller('post')
 export class PostController {
@@ -20,8 +23,9 @@ export class PostController {
   }
 
   @Post()
-  createPost(@Body() data: PostDTO) {
-    return this.postService.create(data);
+  @UseGuards(new AuthGuard())
+  createPost(@User('id') userId, @Body() data: PostDTO) {
+    return this.postService.create(userId, data);
   }
 
   @Get(':id')
@@ -30,12 +34,18 @@ export class PostController {
   }
 
   @Put(':id')
-  updatePost(@Param('id') id: string, @Body() data: Partial<PostDTO>) {
-    return this.postService.update(id, data);
+  @UseGuards(new AuthGuard())
+  updatePost(
+    @Param('id') id: string,
+    @User('id') userId: string,
+    @Body() data: Partial<PostDTO>,
+  ) {
+    return this.postService.update(id, userId, data);
   }
 
   @Delete(':id')
-  deletePost(@Param('id') id: string) {
-    return this.postService.delete(id);
+  @UseGuards(new AuthGuard())
+  deletePost(@Param('id') id: string, @User('id') userId: string) {
+    return this.postService.delete(id, userId);
   }
 }
