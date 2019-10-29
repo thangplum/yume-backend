@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()

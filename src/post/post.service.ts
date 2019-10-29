@@ -16,8 +16,15 @@ export class PostService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  private toResponseObject(post: PostEntity) {
-    return { ...post, author: post.author.toResponseObject(false) };
+  private toResponseObject(post: PostEntity): PostResponseDTO {
+    const responseObject: any = {
+      ...post,
+      author: post.author.toResponseObject(false),
+    };
+    if (responseObject.likes) {
+      responseObject.likes = post.likes.length;
+    }
+    return responseObject;
   }
 
   private ensureOwnership(post: PostEntity, userId: string) {
@@ -27,7 +34,9 @@ export class PostService {
   }
 
   async showAll(): Promise<PostResponseDTO[]> {
-    const posts = await this.postRepository.find({ relations: ['author'] });
+    const posts = await this.postRepository.find({
+      relations: ['author', 'likes'],
+    });
     return posts.map(post => this.toResponseObject(post));
   }
 
@@ -41,7 +50,7 @@ export class PostService {
   async show(id: string): Promise<PostResponseDTO> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['author'],
+      relations: ['author', 'likes'],
     });
     if (!post) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -71,12 +80,70 @@ export class PostService {
   }
 
   async delete(id: string, userId: string) {
-    const post = await this.postRepository.findOne({ where: { id }, relations: ['author'] });
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['author'],
+    });
     if (!post) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
     this.ensureOwnership(post, userId);
     await this.postRepository.delete({ id });
     return this.toResponseObject(post);
+  }
+
+  async like(id: string, userId: string) {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['author', 'likes'],
+    });
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (post.likes.filter(liker => liker.id === user.id).length > 0) {
+      post.likes = post.likes.filter(liker => liker.id !== user.id);
+    } else {
+      post.likes.push(user);
+    }
+    await this.postRepository.save(post);
+    return this.toResponseObject(post);
+  }
+
+  async bookmark(id: string, userId: string) {
+    const post = await this.postRepository.findOne({ where: { id } });
+    if (!post) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['bookmarks'],
+    });
+    if (user.bookmarks.filter(bookmark => bookmark.id === post.id).length < 1) {
+      user.bookmarks.push(post);
+      await this.userRepository.save(user);
+    } else {
+      throw new HttpException(
+        'Idea already bookmarked',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return user.toResponseObject();
+  }
+
+  async unBookmark(id: string, userId: string) {
+    const post = await this.postRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['bookmarks'],
+    });
+    if (user.bookmarks.filter(bookmark => bookmark.id === post.id).length > 0) {
+      user.bookmarks = user.bookmarks.filter(
+        bookmark => bookmark.id !== post.id,
+      );
+      await this.userRepository.save(user);
+    } else {
+      throw new HttpException('Idea not bookmarked', HttpStatus.BAD_REQUEST);
+    }
+    return user.toResponseObject();
   }
 }

@@ -5,6 +5,9 @@ import {
   CreateDateColumn,
   ManyToOne,
   UpdateDateColumn,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 
@@ -27,4 +30,8 @@ export class PostEntity {
 
   @ManyToOne(type => UserEntity, author => author.posts)
   author: UserEntity;
+
+  @ManyToMany(type => UserEntity, { cascade: true })
+  @JoinTable()
+  likes: UserEntity[];
 }

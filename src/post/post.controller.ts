@@ -48,4 +48,28 @@ export class PostController {
   deletePost(@Param('id') id: string, @User('id') userId: string) {
     return this.postService.delete(id, userId);
   }
+
+  @Post(':id/like')
+  @UseGuards(new AuthGuard())
+  likePost(@Param('id') id: string, @User('id') userId: string) {
+    return this.postService.like(id, userId);
+  }
+
+  @Delete(':id/like')
+  @UseGuards(new AuthGuard())
+  unLikePost(@Param('id') id: string, @User('id') userId: string) {
+    return this.postService.like(id, userId);
+  }
+
+  @Post(':id/bookmark')
+  @UseGuards(new AuthGuard())
+  bookmarkPost(@Param('id') id: string, @User('id') userId: string) {
+    return this.postService.bookmark(id, userId);
+  }
+
+  @Delete(':id/bookmark')
+  @UseGuards(new AuthGuard())
+  unBookmarkPost(@Param('id') id: string, @User('id') userId: string) {
+    return this.postService.unBookmark(id, userId);
+  }
 }

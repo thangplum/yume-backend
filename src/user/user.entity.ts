@@ -6,6 +6,8 @@ import {
   CreateDateColumn,
   BeforeUpdate,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 import * as bcrypt from 'bcryptjs';
@@ -39,6 +41,10 @@ export class UserEntity {
   @OneToMany(type => PostEntity, post => post.author)
   posts: PostEntity[];
 
+  @ManyToMany(type => PostEntity, { cascade: true })
+  @JoinTable()
+  bookmarks: PostEntity[];
+
   @BeforeInsert()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
@@ -52,6 +58,9 @@ export class UserEntity {
     }
     if (this.posts) {
       responseObj.posts = this.posts;
+    }
+    if (this.bookmarks) {
+      responseObj.bookmarks = this.bookmarks;
     }
     return responseObj;
   }
