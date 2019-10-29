@@ -25,18 +25,22 @@ export class ReplyService {
     return responseObject;
   }
 
-  async showByPost(postId: string) {
-    const post = await this.postRepository.findOne({
-      where: { id: postId },
-      relations: ['replies', 'replies.author', 'replies.post'],
+  async showByPost(postId: string, page: number = 1) {
+    const replies = await this.replyRepository.find({
+      where: { post: { id: postId } },
+      relations: ['author'],
+      take: 25,
+      skip: 25 * (page - 1),
     });
-    return post.replies.map(reply => this.toResponseObject(reply));
+    return replies.map(reply => this.toResponseObject(reply));
   }
 
-  async showByUser(userId: string) {
+  async showByUser(userId: string, page: number = 1) {
     const replies = await this.replyRepository.find({
       where: { author: { id: userId } },
-      relations: ['author'],
+      relations: ['post'],
+      take: 25,
+      skip: 25 * (page - 1),
     });
     return replies.map(reply => this.toResponseObject(reply));
   }
@@ -47,6 +51,9 @@ export class ReplyService {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
     const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
     const reply = await this.replyRepository.create({
       ...data,
       post,

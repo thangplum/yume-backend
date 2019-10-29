@@ -6,6 +6,7 @@ import {
   UseGuards,
   Body,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ReplyService } from './reply.service';
 import { AuthGuard } from '../shared/auth.guard';
@@ -17,13 +18,13 @@ export class ReplyController {
   constructor(private readonly replyService: ReplyService) {}
 
   @Get('post/:id')
-  showRepliesByPost(@Param('id') postId: string) {
-    return this.replyService.showByPost(postId);
+  showRepliesByPost(@Param('id') postId: string, @Query('page') page: number) {
+    return this.replyService.showByPost(postId, page);
   }
 
   @Get('user/:id')
-  showRepliesByUser(@Param('id') userId: string) {
-    return this.replyService.showByUser(userId);
+  showRepliesByUser(@Param('id') userId: string, @Query('page') page: number) {
+    return this.replyService.showByUser(userId, page);
   }
 
   @Post('post/:id')

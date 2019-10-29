@@ -1,11 +1,13 @@
 {
-    "type": "postgres",
-    "host": "localhost",
-    "port": 54320,
-    "username": "postgres",
-    "password": "example",
-    "database": "test",
-    "entities": ["dist/**/*.entity{.ts,.js}"],
-    "synchronize": true,
-    "logging": true
-  }
+  "type": "postgres",
+  "host": "localhost",
+  "port": 54320,
+  "username": "postgres",
+  "password": "example",
+  "database": "test",
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "synchronize": true,
+  "logging": true,
+  "dropSchemax": true,
+  "the drop schema deltee all data in databse": 1
+}

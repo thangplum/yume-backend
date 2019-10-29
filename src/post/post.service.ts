@@ -33,15 +33,24 @@ export class PostService {
     }
   }
 
-  async showAll(): Promise<PostResponseDTO[]> {
+  async showAll(
+    page: number = 1,
+    newest?: boolean,
+  ): Promise<PostResponseDTO[]> {
     const posts = await this.postRepository.find({
       relations: ['author', 'likes', 'replies'],
+      take: 25,
+      skip: 25 * (page - 1),
+      order: newest && { created: 'DESC' },
     });
     return posts.map(post => this.toResponseObject(post));
   }
 
   async create(userId: string, data: PostDTO): Promise<PostResponseDTO> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
     const post = await this.postRepository.create({ ...data, author: user });
     await this.postRepository.save(post);
     return this.toResponseObject(post);
@@ -97,7 +106,9 @@ export class PostService {
       where: { id },
       relations: ['author', 'likes', 'replies'],
     });
-
+    if (!post) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (post.likes.filter(liker => liker.id === user.id).length > 0) {
       post.likes = post.likes.filter(liker => liker.id !== user.id);
@@ -117,6 +128,9 @@ export class PostService {
       where: { id: userId },
       relations: ['bookmarks'],
     });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
     if (user.bookmarks.filter(bookmark => bookmark.id === post.id).length < 1) {
       user.bookmarks.push(post);
       await this.userRepository.save(user);
@@ -132,10 +146,16 @@ export class PostService {
 
   async unBookmark(id: string, userId: string) {
     const post = await this.postRepository.findOne({ where: { id } });
+    if (!post) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
     const user = await this.userRepository.findOne({
       where: { id: userId },
       relations: ['bookmarks'],
     });
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
     if (user.bookmarks.filter(bookmark => bookmark.id === post.id).length > 0) {
       user.bookmarks = user.bookmarks.filter(
         bookmark => bookmark.id !== post.id,

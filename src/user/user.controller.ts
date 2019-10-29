@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseGuards, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserRegisterDTO } from './dto/user-register.dto';
 import { UserLoginDTO } from './dto/user-login.dto';
@@ -10,8 +10,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('users')
-  showAllUsers() {
-    return this.userService.showAll();
+  showAllUsers(@Query('page') page: number) {
+    return this.userService.showAll(page);
   }
 
   @Post('login')

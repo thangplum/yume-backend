@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { PostDTO } from './post.dto';
@@ -18,8 +19,13 @@ export class PostController {
   constructor(private readonly postService: PostService) {}
 
   @Get()
-  showAllPosts() {
-    return this.postService.showAll();
+  showAllPosts(@Query('page') page: number) {
+    return this.postService.showAll(page);
+  }
+
+  @Get('/newest')
+  showNewestPosts(@Query('page') page: number) {
+    return this.postService.showAll(page, true);
   }
 
   @Post()
