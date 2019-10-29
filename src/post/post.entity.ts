@@ -10,6 +10,7 @@ import {
   JoinTable,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
+import { ReplyEntity } from '../reply/reply.entity';
 
 @Entity('post')
 export class PostEntity {
@@ -34,4 +35,7 @@ export class PostEntity {
   @ManyToMany(type => UserEntity, { cascade: true })
   @JoinTable()
   likes: UserEntity[];
+
+  @OneToMany(type => ReplyEntity, reply => reply.post, { cascade: true })
+  replies: ReplyEntity[];
 }

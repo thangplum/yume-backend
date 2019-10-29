@@ -11,6 +11,7 @@ import { PostModule } from './post/post.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/http-error.filter';
 import { LoggingInterceptor } from './shared/logging.interceptor';
+import { ReplyModule } from './reply/reply.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
     AuthModule,
     UserModule,
     PostModule,
+    ReplyModule,
   ],
   controllers: [AppController],
   providers: [

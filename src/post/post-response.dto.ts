@@ -8,4 +8,5 @@ export class PostResponseDTO {
   comment: string;
   author: UserResponseDTO;
   likes?: number;
+  // replies?: Reply
 }

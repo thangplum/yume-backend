@@ -9,6 +9,7 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
@@ -33,6 +34,7 @@ export class UserEntity {
   username: string;
 
   @Column({ type: 'text', select: true })
+  @Exclude()
   password: string;
 
   @CreateDateColumn()

@@ -35,7 +35,7 @@ export class PostService {
 
   async showAll(): Promise<PostResponseDTO[]> {
     const posts = await this.postRepository.find({
-      relations: ['author', 'likes'],
+      relations: ['author', 'likes', 'replies'],
     });
     return posts.map(post => this.toResponseObject(post));
   }
@@ -50,7 +50,7 @@ export class PostService {
   async show(id: string): Promise<PostResponseDTO> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['author', 'likes'],
+      relations: ['author', 'likes', 'replies'],
     });
     if (!post) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -74,7 +74,7 @@ export class PostService {
     await this.postRepository.update({ id }, data);
     post = await this.postRepository.findOne({
       where: { id },
-      relations: ['author'],
+      relations: ['author', 'replies'],
     });
     return this.toResponseObject(post);
   }
@@ -82,7 +82,7 @@ export class PostService {
   async delete(id: string, userId: string) {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['author'],
+      relations: ['author', 'replies'],
     });
     if (!post) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -95,7 +95,7 @@ export class PostService {
   async like(id: string, userId: string) {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['author', 'likes'],
+      relations: ['author', 'likes', 'replies'],
     });
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
