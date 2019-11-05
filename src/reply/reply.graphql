@@ -1,0 +1,14 @@
+type Reply {
+  id: ID!
+  created: String!
+  comment: String!
+}
+
+type Query {
+  reply(id: ID!): Reply
+}
+
+type Mutation {
+  createReply(post: ID!, comment: String!): Reply
+  deleteReply(id: ID!): Reply
+}

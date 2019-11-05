@@ -8,7 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
 // require('ssl-root-cas/latest').inject();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
     new ValidationPipe({
@@ -17,6 +17,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(3000);
+  await app.listen(4000);
 }
 bootstrap();

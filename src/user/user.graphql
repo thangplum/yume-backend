@@ -1,0 +1,33 @@
+type User {
+  id: ID
+  username: String!
+  email: String!
+  created: String!
+  bookmarks: [Post!]
+  posts: [Post!]
+  replies: [Reply!]
+}
+
+type Auth {
+  email: String!
+  token: String!
+}
+
+type Query {
+  users(page: Int): [User!]
+  user(email: String!): User
+  whoami: User
+}
+
+type Mutation {
+  login(email: String!, password: String!): Auth!
+  register(email: String!, password: String!, username: String!): Auth!
+}
+# export class UserResponseDTO {
+#   id: string;
+#   username: string;
+#   email: string;
+#   token?: string;
+#   created: Date;
+#   bookmarks?: PostEntity[];
+# }

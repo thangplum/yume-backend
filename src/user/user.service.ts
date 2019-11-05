@@ -22,6 +22,17 @@ export class UserService {
     return users.map(user => user.toResponseObject(false));
   }
 
+  async read(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['posts', 'bookmarks'],
+    });
+    if (!user) {
+      throw new HttpException('User does not exist', HttpStatus.BAD_REQUEST);
+    }
+    return user.toResponseObject(false);
+  }
+
   async login(data: UserLoginDTO): Promise<UserResponseDTO> {
     const { email, password } = data;
     const user = await this.userRepository.findOne({ where: { email } });

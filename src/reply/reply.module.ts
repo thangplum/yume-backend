@@ -5,10 +5,11 @@ import { PostEntity } from '../post/post.entity';
 import { UserEntity } from '../user/user.entity';
 import { ReplyEntity } from './reply.entity';
 import { ReplyController } from './reply.controller';
+import { ReplyResolver } from './reply.resolver';
 
 @Module({
   imports: [TypeOrmModule.forFeature([PostEntity, UserEntity, ReplyEntity])],
-  providers: [ReplyService],
+  providers: [ReplyService, ReplyResolver],
   controllers: [ReplyController],
 })
 export class ReplyModule {}

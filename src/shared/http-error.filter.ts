@@ -10,6 +10,9 @@ import {
 export class HttpErrorFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
+    if (!ctx.getRequest()) {
+      return;
+    }
     const request = ctx.getRequest();
     const response = ctx.getResponse();
     const status = exception.getStatus();

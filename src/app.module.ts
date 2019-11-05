@@ -12,10 +12,15 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpErrorFilter } from './shared/http-error.filter';
 import { LoggingInterceptor } from './shared/logging.interceptor';
 import { ReplyModule } from './reply/reply.module';
+import { GraphQLModule } from '@nestjs/graphql';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
+    GraphQLModule.forRoot({
+      typePaths: ['./**/*.graphql'],
+      context: ({ req }) => ({ headers: req.headers }),
+    }),
     ConfigModule,
     AuthModule,
     UserModule,

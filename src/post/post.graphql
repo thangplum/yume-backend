@@ -1,0 +1,24 @@
+type Post {
+  id: ID
+  updated: String!
+  created: String!
+  caption: String!
+  comment: String!
+  author: User
+  likes: Int
+  replies: [Reply!]
+}
+
+type Query {
+  posts(page: Int, newest: Boolean): [Post!]
+  post(id: ID!): Post!
+}
+
+type Mutation {
+  createPost(caption: String!, comment: String!): Post!
+  updatePost(id: ID!, caption: String, comment: String): Post!
+  deletePost(id: ID!): Post!
+  like(id: ID!): Post!
+  bookmark(id: ID!): User!
+  unbookmark(id: ID!): User!
+}

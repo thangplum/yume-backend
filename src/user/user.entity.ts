@@ -72,11 +72,11 @@ export class UserEntity {
   }
 
   private get token() {
-    const { id, username } = this;
+    const { id, email } = this;
     return jwt.sign(
       {
         id,
-        username,
+        email,
       },
       'projectxy',
       { expiresIn: '1d' },
