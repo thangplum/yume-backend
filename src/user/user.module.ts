@@ -21,5 +21,6 @@ import { ReplyService } from '../reply/reply.service';
     UserResolver,
     ReplyService,
   ],
+  exports: [UserService],
 })
 export class UserModule {}

@@ -12,7 +12,8 @@ import { ReplyService } from '../reply/reply.service';
 import { UserLoginDTO } from './dto/user-login.dto';
 import { UserRegisterDTO } from './dto/user-register.dto';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../shared/auth.guard';
+import { GqlAuthGuard } from '../auth/gql.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
 
 @Resolver('User')
 export class UserResolver {
@@ -32,8 +33,8 @@ export class UserResolver {
   }
 
   @Query()
-  @UseGuards(new AuthGuard())
-  async whoami(@Context('user') user) {
+  @UseGuards(GqlAuthGuard)
+  async whoami(@CurrentUser() user) {
     const { email } = user;
     return await this.userService.read(email);
   }

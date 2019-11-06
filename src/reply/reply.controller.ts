@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ReplyService } from './reply.service';
-import { AuthGuard } from '../shared/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.decorator';
 import { ReplyDTO } from './reply.dto';
 
@@ -28,7 +28,7 @@ export class ReplyController {
   }
 
   @Post('post/:id')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   createReply(
     @Param('id') postId: string,
     @User('id') userId: string,
@@ -43,7 +43,7 @@ export class ReplyController {
   }
 
   @Delete(':id')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   deleteReply(@Param('id') id: string, @User('id') userId: string) {
     return this.replyService.deleteReply(id, userId);
   }

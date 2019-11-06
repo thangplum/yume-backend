@@ -10,8 +10,9 @@ import {
 import { PostService } from './post.service';
 import { ReplyService } from '../reply/reply.service';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../shared/auth.guard';
 import { PostDTO } from './post.dto';
+import { GqlAuthGuard } from '../auth/gql.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
 
 @Resolver('Post')
 export class PostResolver {
@@ -31,11 +32,11 @@ export class PostResolver {
   }
 
   @Mutation()
-  @UseGuards(new AuthGuard())
+  @UseGuards(GqlAuthGuard)
   async createPost(
     @Args('caption') caption: string,
     @Args('comment') comment: string,
-    @Context('user') user,
+    @CurrentUser() user,
   ) {
     const data: PostDTO = { caption, comment };
     const { id: userId } = user;
@@ -43,12 +44,12 @@ export class PostResolver {
   }
 
   @Mutation()
-  @UseGuards(new AuthGuard())
+  @UseGuards(GqlAuthGuard)
   async updatePost(
     @Args('id') id: string,
     @Args('caption') caption: string,
     @Args('comment') comment: string,
-    @Context('user') user,
+    @CurrentUser() user,
   ) {
     const data: PostDTO = { caption, comment };
     const { id: userId } = user;
@@ -56,29 +57,29 @@ export class PostResolver {
   }
 
   @Mutation()
-  @UseGuards(new AuthGuard())
-  async deletePost(@Args('id') id: string, @Context('user') user) {
+  @UseGuards(GqlAuthGuard)
+  async deletePost(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
     return await this.postService.delete(id, userId);
   }
 
   @Mutation()
-  @UseGuards(new AuthGuard())
-  async like(@Args('id') id: string, @Context('user') user) {
+  @UseGuards(GqlAuthGuard)
+  async like(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
     return await this.postService.like(id, userId);
   }
 
   @Mutation()
-  @UseGuards(new AuthGuard())
-  async bookmark(@Args('id') id: string, @Context('user') user) {
+  @UseGuards(GqlAuthGuard)
+  async bookmark(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
     return await this.postService.bookmark(id, userId);
   }
 
   @Mutation()
-  @UseGuards(new AuthGuard())
-  async unbookmark(@Args('id') id: string, @Context('user') user) {
+  @UseGuards(GqlAuthGuard)
+  async unbookmark(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
     return await this.postService.unBookmark(id, userId);
   }

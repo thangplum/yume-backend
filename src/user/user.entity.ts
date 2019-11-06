@@ -53,11 +53,11 @@ export class UserEntity {
   }
 
   toResponseObject(showToken: boolean = true): UserResponseDTO {
-    const { id, created, username, token, email } = this;
+    const { id, created, username, email } = this;
     const responseObj: any = { id, created, username, email };
-    if (showToken) {
-      responseObj.token = token;
-    }
+    // if (showToken) {
+    //   responseObj.token = token;
+    // }
     if (this.posts) {
       responseObj.posts = this.posts;
     }
@@ -71,15 +71,15 @@ export class UserEntity {
     return await bcrypt.compare(attempt, this.password);
   }
 
-  private get token() {
-    const { id, email } = this;
-    return jwt.sign(
-      {
-        id,
-        email,
-      },
-      'projectxy',
-      { expiresIn: '1d' },
-    );
-  }
+  // private get token() {
+  //   const { id, email } = this;
+  //   return jwt.sign(
+  //     {
+  //       id,
+  //       email,
+  //     },
+  //     'projectxy',
+  //     { expiresIn: '1d' },
+  //   );
+  // }
 }

@@ -19,7 +19,7 @@ import { GraphQLModule } from '@nestjs/graphql';
     TypeOrmModule.forRoot(),
     GraphQLModule.forRoot({
       typePaths: ['./**/*.graphql'],
-      context: ({ req }) => ({ headers: req.headers }),
+      context: ({ req }) => ({ req }),
     }),
     ConfigModule,
     AuthModule,

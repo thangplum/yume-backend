@@ -8,10 +8,12 @@ import {
   Param,
   UseGuards,
   Query,
+  Logger,
+  Request,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { PostDTO } from './post.dto';
-import { AuthGuard } from '../shared/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.decorator';
 
 @Controller('post')
@@ -29,8 +31,8 @@ export class PostController {
   }
 
   @Post()
-  @UseGuards(new AuthGuard())
-  createPost(@User('id') userId, @Body() data: PostDTO) {
+  @UseGuards(AuthGuard('jwt'))
+  createPost(@User('id') userId: string, @Body() data: PostDTO) {
     return this.postService.create(userId, data);
   }
 
@@ -40,7 +42,7 @@ export class PostController {
   }
 
   @Put(':id')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   updatePost(
     @Param('id') id: string,
     @User('id') userId: string,
@@ -50,31 +52,31 @@ export class PostController {
   }
 
   @Delete(':id')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   deletePost(@Param('id') id: string, @User('id') userId: string) {
     return this.postService.delete(id, userId);
   }
 
   @Post(':id/like')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   likePost(@Param('id') id: string, @User('id') userId: string) {
     return this.postService.like(id, userId);
   }
 
   @Delete(':id/like')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   unLikePost(@Param('id') id: string, @User('id') userId: string) {
     return this.postService.like(id, userId);
   }
 
   @Post(':id/bookmark')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   bookmarkPost(@Param('id') id: string, @User('id') userId: string) {
     return this.postService.bookmark(id, userId);
   }
 
   @Delete(':id/bookmark')
-  @UseGuards(new AuthGuard())
+  @UseGuards(AuthGuard('jwt'))
   unBookmarkPost(@Param('id') id: string, @User('id') userId: string) {
     return this.postService.unBookmark(id, userId);
   }

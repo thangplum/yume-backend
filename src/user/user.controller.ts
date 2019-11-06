@@ -1,9 +1,15 @@
-import { Controller, Post, Get, Body, UseGuards, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  UseGuards,
+  Query,
+  Request,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserRegisterDTO } from './dto/user-register.dto';
 import { UserLoginDTO } from './dto/user-login.dto';
-import { AuthGuard } from '../shared/auth.guard';
-import { User } from './user.decorator';
 
 @Controller()
 export class UserController {
@@ -12,11 +18,6 @@ export class UserController {
   @Get('users')
   showAllUsers(@Query('page') page: number) {
     return this.userService.showAll(page);
-  }
-
-  @Post('login')
-  login(@Body() data: UserLoginDTO) {
-    return this.userService.login(data);
   }
 
   @Post('register')
