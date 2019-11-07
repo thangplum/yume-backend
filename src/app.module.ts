@@ -13,6 +13,7 @@ import { HttpErrorFilter } from './shared/http-error.filter';
 import { LoggingInterceptor } from './shared/logging.interceptor';
 import { ReplyModule } from './reply/reply.module';
 import { GraphQLModule } from '@nestjs/graphql';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { GraphQLModule } from '@nestjs/graphql';
     UserModule,
     PostModule,
     ReplyModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [

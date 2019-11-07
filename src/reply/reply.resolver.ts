@@ -1,13 +1,25 @@
-import { Resolver, Query, Args, Mutation, Context } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  Context,
+  ResolveProperty,
+  Parent,
+} from '@nestjs/graphql';
 import { ReplyService } from './reply.service';
 import { UseGuards } from '@nestjs/common';
 import { ReplyDTO } from './reply.dto';
 import { GqlAuthGuard } from '../auth/gql.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
+import { CommentService } from '../comment/comment.service';
 
 @Resolver('Reply')
 export class ReplyResolver {
-  constructor(private readonly replyService: ReplyService) {}
+  constructor(
+    private readonly replyService: ReplyService,
+    private readonly commentService: CommentService,
+  ) {}
 
   @Query()
   async reply(@Args('id') id: string) {
@@ -31,5 +43,11 @@ export class ReplyResolver {
   async deleteReply(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
     return await this.replyService.deleteReply(id, userId);
+  }
+
+  @ResolveProperty()
+  async comments(@Parent() reply) {
+    const { id } = reply;
+    return await this.commentService.showByReply(id);
   }
 }

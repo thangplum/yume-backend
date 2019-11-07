@@ -2,6 +2,7 @@ type Reply {
   id: ID!
   created: String!
   comment: String!
+  comments: [Comment!]
 }
 
 type Query {
