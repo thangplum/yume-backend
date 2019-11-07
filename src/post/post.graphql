@@ -4,6 +4,7 @@ type Post {
   created: String!
   caption: String!
   comment: String!
+  category: Category!
   author: User
   likes: Int
   replies: [Reply!]
@@ -15,7 +16,7 @@ type Query {
 }
 
 type Mutation {
-  createPost(caption: String!, comment: String!): Post!
+  createPost(caption: String!, comment: String!, category: ID!): Post!
   updatePost(id: ID!, caption: String, comment: String): Post!
   deletePost(id: ID!): Post!
   like(id: ID!): Post!

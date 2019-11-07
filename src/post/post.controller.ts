@@ -30,10 +30,14 @@ export class PostController {
     return this.postService.showAll(page, true);
   }
 
-  @Post()
+  @Post(':categoryId')
   @UseGuards(AuthGuard('jwt'))
-  createPost(@User('id') userId: string, @Body() data: PostDTO) {
-    return this.postService.create(userId, data);
+  createPost(
+    @User('id') userId: string,
+    @Body() data: PostDTO,
+    @Param('categoryId') categoryId: string,
+  ) {
+    return this.postService.create(userId, categoryId, data);
   }
 
   @Get(':id')

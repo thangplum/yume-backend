@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { ReplyEntity } from '../reply/reply.entity';
+import { CategoryEntity } from '../category/category.entity';
 
 @Entity('post')
 export class PostEntity {
@@ -28,6 +29,10 @@ export class PostEntity {
 
   @UpdateDateColumn()
   updated: Date;
+
+  @ManyToOne(type => CategoryEntity)
+  @JoinTable()
+  category: CategoryEntity;
 
   @ManyToOne(type => UserEntity, author => author.posts)
   author: UserEntity;

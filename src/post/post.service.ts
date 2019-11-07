@@ -6,6 +6,7 @@ import { PostDTO } from './post.dto';
 import { UserEntity } from '../user/user.entity';
 import { isDeclaration } from '@babel/types';
 import { PostResponseDTO } from './post-response.dto';
+import { CategoryEntity } from '../category/category.entity';
 
 @Injectable()
 export class PostService {
@@ -14,6 +15,8 @@ export class PostService {
     private readonly postRepository: Repository<PostEntity>,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(CategoryEntity)
+    private readonly categoryRepository: Repository<CategoryEntity>,
   ) {}
 
   private toResponseObject(post: PostEntity): PostResponseDTO {
@@ -38,7 +41,7 @@ export class PostService {
     newest?: boolean,
   ): Promise<PostResponseDTO[]> {
     const posts = await this.postRepository.find({
-      relations: ['author', 'likes', 'replies'],
+      relations: ['author', 'likes', 'replies', 'category'],
       take: 25,
       skip: 25 * (page - 1),
       order: newest && { created: 'DESC' },
@@ -46,12 +49,36 @@ export class PostService {
     return posts.map(post => this.toResponseObject(post));
   }
 
-  async create(userId: string, data: PostDTO): Promise<PostResponseDTO> {
+  async showByCategory(categoryId: string, page: number = 1) {
+    const posts = await this.postRepository.find({
+      where: { category: categoryId },
+      relations: ['author', 'likes', 'replies'],
+      take: 25,
+      skip: 25 * (page - 1),
+    });
+    return posts.map(post => this.toResponseObject(post));
+  }
+
+  async create(
+    userId: string,
+    categoryId: string,
+    data: PostDTO,
+  ): Promise<PostResponseDTO> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    const post = await this.postRepository.create({ ...data, author: user });
+    const category = await this.categoryRepository.findOne({
+      where: { id: categoryId },
+    });
+    if (!category) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+    const post = await this.postRepository.create({
+      ...data,
+      author: user,
+      category,
+    });
     await this.postRepository.save(post);
     return this.toResponseObject(post);
   }
@@ -59,7 +86,7 @@ export class PostService {
   async show(id: string): Promise<PostResponseDTO> {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['author', 'likes', 'replies'],
+      relations: ['author', 'likes', 'replies', 'category'],
     });
     if (!post) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);

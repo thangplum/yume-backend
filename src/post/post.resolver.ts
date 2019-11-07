@@ -36,11 +36,12 @@ export class PostResolver {
   async createPost(
     @Args('caption') caption: string,
     @Args('comment') comment: string,
+    @Args('category') categoryId: string,
     @CurrentUser() user,
   ) {
     const data: PostDTO = { caption, comment };
     const { id: userId } = user;
-    return await this.postService.create(userId, data);
+    return await this.postService.create(userId, categoryId, data);
   }
 
   @Mutation()

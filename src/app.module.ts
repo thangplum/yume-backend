@@ -14,6 +14,7 @@ import { LoggingInterceptor } from './shared/logging.interceptor';
 import { ReplyModule } from './reply/reply.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { CommentModule } from './comment/comment.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CommentModule } from './comment/comment.module';
     PostModule,
     ReplyModule,
     CommentModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [

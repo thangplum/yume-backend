@@ -1,0 +1,17 @@
+type Category {
+  id: ID
+  name: String!
+  parent: Category
+  children: [Category]
+  posts: [Post!]
+}
+
+type Query {
+  category(id: ID!): Category
+  categories: [Category!]
+  forumCategories: [Category!]
+}
+
+type Mutation {
+  createCategory(name: String!, parent: ID): Category!
+}
