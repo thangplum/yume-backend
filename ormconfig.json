@@ -1,13 +1,16 @@
 {
   "type": "postgres",
-  "host": "localhost",
-  "port": 54320,
-  "username": "postgres",
-  "password": "example",
+  "host": "db-postgresql-nyc1-58995-do-user-2366353-0.db.ondigitalocean.com",
+  "port": 25060,
+  "username": "doadmin",
+  "password": "w9kfwpimu27vvyhe",
   "database": "test",
   "entities": ["dist/**/*.entity{.ts,.js}"],
   "synchronize": true,
   "logging": true,
   "dropSchemax": true,
-  "the drop schema deltee all data in databse": 1
+  "the drop schema deltee all data in databse": 1,
+  "ssl": {
+    "ca": "-----BEGIN CERTIFICATE----- MIIEMDCCApigAwIBAgIDVHQXMA0GCSqGSIb3DQEBDAUAMDoxODA2BgNVBAMMLzIz NzY4OGEzLTBjOGQtNDM4NC05NTM4LWNhNmU5M2VmYmFiOSBQcm9qZWN0IENBMB4X DTE5MTExMDIyMTAwMFoXDTI5MTEwNzIyMTAwMFowOjE4MDYGA1UEAwwvMjM3Njg4 YTMtMGM4ZC00Mzg0LTk1MzgtY2E2ZTkzZWZiYWI5IFByb2plY3QgQ0EwggGiMA0G CSqGSIb3DQEBAQUAA4IBjwAwggGKAoIBgQDQ2UzFZgI0jZ8E1YOeeybuiYonzTAZ jyT/Pgh5K94U0dhxozmnU79TjnsJD1qJoTxjZjC8a8JXSVjAwQgdT9ohpifvNtsI +8GCzZUy44yapLWuFmv3SVbmZyQTbKyTAe0Xm+KkuoaV9CtUq8ShlkvrTOF5As2L rExXFlLs6DiYbrypT3aL44rsb1buUOEm2dwDY7qgLXQ1BSYe63Q3qhKSbY3mrm8c zR95/ZfoxfuzdT7aAMVPi21rl5neZddHgeG1VpxuB8PdhXLQsm1uRDIpTO2XOmNn j0cgg5Fp7HE391mxPnALMoAUuQldpnspIKj9P20iuruRoYqed5m5gRPy9UO2bBf8 pz3Hc2dUU+HKs6NYzCO0VqSxEDZQYCoRhG3wVTc7GjpeA9ByxPGRZShFilugyo7g jEY5f0JeJQEgcpCC1BtXV0dtrxirLFAiv9hANxixYBYncBjcptgRXHnlBaO5C5TR tA3owC3mMIg62fgYrjNkdt5V4gle9FigT4UCAwEAAaM/MD0wHQYDVR0OBBYEFJ1K oyISKzrqEFSgf6698xU8Mtj5MA8GA1UdEwQIMAYBAf8CAQAwCwYDVR0PBAQDAgEG MA0GCSqGSIb3DQEBDAUAA4IBgQAi3sWbHDtbia0tA4pAHdcycoAV3vKd5jYsp7xl SNIlyIoeUlce3eWqO4i1ZcWtQiwHB29meqNVfDKKxM9c3Zo+PaQes2ekSOw3fBF5 hjaB4MtAubpxeAsYR4BLttpt1xK2xn/e9Us8MxiPHSlYTD/29TdkR4sN9vIzNMOc Fnw/0sdzzdnLtV8rHx2EXSGIymJBT1g2tarL/H0Qm1Nn5Z4ltd/1HzT7D0OCWnNS EfJ9n/zS0C4HAm2/9zkYOPEdIo4R2uoyWCs0jTQ9wUphQ8lNuVArsi78ovWtax7N Ominu/IeVyn9hrPh9PgcRETRWnRuurhFQ7/8mlGI8/ZgClazelksZlNOv8Py1uK5 WOEFxtae9VvV9nkbs8ZLE+TujWafnkBEuZGD7iVkv+leKW1M+pPB/U6rZ2KOSj6V jQ+M8CuCPqwWiyHqSU4z9NncixlZDRTebDqqOO9HdiNMhb8PBaEBUPtcUmXcQSrn 1JjmH6kE5WREiybol2opgViC87M= -----END CERTIFICATE----- "
+  }
 }
