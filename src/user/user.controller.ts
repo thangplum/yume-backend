@@ -19,9 +19,4 @@ export class UserController {
   showAllUsers(@Query('page') page: number) {
     return this.userService.showAll(page);
   }
-
-  @Post('register')
-  register(@Body() data: UserRegisterDTO) {
-    return this.userService.register(data);
-  }
 }

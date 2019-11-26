@@ -4,13 +4,9 @@ import {
   Args,
   ResolveProperty,
   Parent,
-  Mutation,
-  Context,
 } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { ReplyService } from '../reply/reply.service';
-import { UserLoginDTO } from './dto/user-login.dto';
-import { UserRegisterDTO } from './dto/user-register.dto';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/gql.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
@@ -37,25 +33,6 @@ export class UserResolver {
   async whoami(@CurrentUser() user) {
     const { email } = user;
     return await this.userService.read(email);
-  }
-
-  @Mutation()
-  async login(
-    @Args('email') email: string,
-    @Args('password') password: string,
-  ) {
-    const user: UserLoginDTO = { email, password };
-    return await this.userService.login(user);
-  }
-
-  @Mutation()
-  async register(
-    @Args('email') email: string,
-    @Args('password') password: string,
-    @Args('username') username: string,
-  ) {
-    const user: UserRegisterDTO = { email, password, username };
-    return await this.userService.register(user);
   }
 
   @ResolveProperty()

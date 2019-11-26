@@ -48,6 +48,12 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Documentation
+
+```bash
+$ npx compodoc -p tsconfig.json -s
+```
+
 ## Stay in touch
 
 - Website - [https://yume.me](https://yume.me/)
