@@ -182,6 +182,17 @@ export class PostService {
     return this.toResponseObject(post);
   }
 
+  async showBySlug(slug: string): Promise<PostResponseDTO> {
+    const post = await this.postRepository.findOne({
+      where: { slug },
+      relations: ['author', 'likes', 'replies', 'category'],
+    });
+    if (!post) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+    return this.toResponseObject(post);
+  }
+
   async update(
     id: string,
     userId: string,

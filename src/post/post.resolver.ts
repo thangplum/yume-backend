@@ -50,6 +50,11 @@ export class PostResolver {
     return await this.postService.show(id);
   }
 
+  @Query('postBySlug')
+  async postBySlug(@Args('slug') slug: string) {
+    return await this.postService.showBySlug(slug);
+  }
+
   @Mutation()
   @UseGuards(GqlAuthGuard)
   async createPost(
