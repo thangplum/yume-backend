@@ -1,6 +1,7 @@
 type Category {
   id: ID
   name: String!
+  slug: String!
   parent: Category
   children: [Category]
   posts(page: Int, limit: Int, newest: Boolean): [Post!]
@@ -8,6 +9,7 @@ type Category {
 
 type Query {
   category(id: ID!): Category
+  categoryBySlug(slug: String!): Category
   categories: [Category!]
   forumCategories: [Category!]
 }

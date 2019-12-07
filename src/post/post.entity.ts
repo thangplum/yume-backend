@@ -8,7 +8,12 @@ import {
   OneToMany,
   ManyToMany,
   JoinTable,
+  Index,
+  BeforeInsert,
 } from 'typeorm';
+import slugify from 'slugify';
+import * as nanoid from 'nanoid';
+
 import { UserEntity } from '../user/user.entity';
 import { ReplyEntity } from '../reply/reply.entity';
 import { CategoryEntity } from '../category/category.entity';
@@ -17,6 +22,9 @@ import { CategoryEntity } from '../category/category.entity';
 export class PostEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ unique: true })
+  slug: string;
 
   @Column('text')
   caption: string;
@@ -43,4 +51,11 @@ export class PostEntity {
 
   @OneToMany(type => ReplyEntity, reply => reply.post, { cascade: true })
   replies: ReplyEntity[];
+
+  @BeforeInsert()
+  async generateSlug() {
+    const slugifiedTitle = slugify(this.caption.trim());
+    const randomId = nanoid(10);
+    this.slug = slugifiedTitle.slice(0, 40) + '-' + randomId;
+  }
 }

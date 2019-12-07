@@ -33,6 +33,17 @@ export class CategoryService {
     return category;
   }
 
+  async showBySlug(slug: string) {
+    const category = await this.categoryRepository.findOne({
+      where: { slug },
+      relations: ['parent', 'children'],
+    });
+    if (!category) {
+      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+    return category;
+  }
+
   async showForumCategory() {
     const categories = await this.categoryRepository.find({
       where: { parent: null },

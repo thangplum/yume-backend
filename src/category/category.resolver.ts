@@ -27,6 +27,11 @@ export class CategoryResolver {
     return await this.categoryService.show(id);
   }
 
+  @Query('categoryBySlug')
+  async categoryBySlug(@Args('slug') slug: string) {
+    return await this.categoryService.showBySlug(slug);
+  }
+
   @Query('forumCategories')
   async forumCategories() {
     return await this.categoryService.showForumCategory();
