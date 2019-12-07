@@ -27,7 +27,7 @@ export class PostController {
 
   @Get('/newest')
   showNewestPosts(@Query('page') page: number) {
-    return this.postService.showAll(page, true);
+    return this.postService.showAll(page, 25, true);
   }
 
   @Post(':categoryId')

@@ -7,19 +7,36 @@ type Post {
   category: Category!
   author: User
   likes: Int
-  replies: [Reply!]
+  replies(page: Int, limit: Int): [Reply!]
 }
 
 type Query {
-  posts(page: Int, newest: Boolean): [Post!]
+  posts(page: Int, limit: Int, newest: Boolean): [Post!]
   post(id: ID!): Post!
+  # posts(first: Int, after: String, last: Int, before: String): PostConnection # for cursor pagination
 }
 
 type Mutation {
   createPost(caption: String!, comment: String!, category: ID!): Post!
   updatePost(id: ID!, caption: String, comment: String): Post!
   deletePost(id: ID!): Post!
-  like(id: ID!): Post!
+  likePost(id: ID!): Post!
   bookmark(id: ID!): User!
   unbookmark(id: ID!): User!
+}
+
+# For cursor based pagination
+type PostConnection {
+  edges: [PostEdge]
+  pageInfo: PostPageInfo!
+}
+
+type PostEdge {
+  node: Post!
+  cursor: String!
+}
+
+type PostPageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
 }

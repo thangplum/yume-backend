@@ -22,15 +22,19 @@ export class ReplyService {
     if (reply.author) {
       responseObject.author = reply.author.toResponseObject(false);
     }
+    if (responseObject.likes) {
+      responseObject.likes = reply.likes.length;
+    }
     return responseObject;
   }
 
-  async showByPost(postId: string, page: number = 1) {
+  async showByPost(postId: string, page: number = 1, limit: number = 25) {
     const replies = await this.replyRepository.find({
       where: { post: { id: postId } },
-      relations: ['author'],
-      take: 25,
-      skip: 25 * (page - 1),
+      relations: ['author', 'likes'],
+      take: limit,
+      skip: limit * (page - 1),
+      order: { created: 'DESC' },
     });
     return replies.map(reply => this.toResponseObject(reply));
   }
@@ -38,7 +42,7 @@ export class ReplyService {
   async showByUser(userId: string, page: number = 1) {
     const replies = await this.replyRepository.find({
       where: { author: { id: userId } },
-      relations: ['post'],
+      relations: ['post', 'likes'],
       take: 25,
       skip: 25 * (page - 1),
     });
@@ -66,7 +70,7 @@ export class ReplyService {
   async show(id: string) {
     const reply = await this.replyRepository.findOne({
       where: { id },
-      relations: ['author', 'post'],
+      relations: ['author', 'post', 'likes'],
     });
     if (!reply) {
       throw new HttpException('Reply does not exist', HttpStatus.BAD_REQUEST);
@@ -89,6 +93,24 @@ export class ReplyService {
       );
     }
     await this.replyRepository.remove(reply);
+    return this.toResponseObject(reply);
+  }
+
+  async like(id: string, userId: string) {
+    const reply = await this.replyRepository.findOne({
+      where: { id },
+      relations: ['author', 'post', 'likes', 'comments'],
+    });
+    if (!reply) {
+      throw new HttpException('Reply not found', HttpStatus.NOT_FOUND);
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (reply.likes.filter(liker => liker.id === user.id).length > 0) {
+      reply.likes = reply.likes.filter(liker => liker.id !== user.id);
+    } else {
+      reply.likes.push(user);
+    }
+    await this.replyRepository.save(reply);
     return this.toResponseObject(reply);
   }
 }

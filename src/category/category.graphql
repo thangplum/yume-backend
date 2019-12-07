@@ -3,7 +3,7 @@ type Category {
   name: String!
   parent: Category
   children: [Category]
-  posts: [Post!]
+  posts(page: Int, limit: Int, newest: Boolean): [Post!]
 }
 
 type Query {

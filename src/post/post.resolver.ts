@@ -22,8 +22,27 @@ export class PostResolver {
   ) {}
 
   @Query('posts')
-  async posts(@Args('page') page: number, @Args('newest') newest: boolean) {
-    return await this.postService.showAll(page, newest);
+  async posts(
+    @Args('page') page: number,
+    @Args('limit') limit: number,
+    @Args('newest') newest: boolean,
+  ) {
+    return await this.postService.showAll(page, limit, newest);
+  }
+
+  // posts implementation using cursor
+  async postsCursor(
+    @Args('first') first: number,
+    @Args('after') after: string,
+    @Args('last') last: number,
+    @Args('before') before: string,
+  ) {
+    return await this.postService.showPostConnection(
+      first,
+      after,
+      last,
+      before,
+    );
   }
 
   @Query('post')
@@ -66,7 +85,7 @@ export class PostResolver {
 
   @Mutation()
   @UseGuards(GqlAuthGuard)
-  async like(@Args('id') id: string, @CurrentUser() user) {
+  async likePost(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
     return await this.postService.like(id, userId);
   }
@@ -86,8 +105,12 @@ export class PostResolver {
   }
 
   @ResolveProperty()
-  async replies(@Parent() post) {
+  async replies(
+    @Parent() post,
+    @Args('page') page: number,
+    @Args('limit') limit: number,
+  ) {
     const { id } = post;
-    return await this.replyService.showByPost(id);
+    return await this.replyService.showByPost(id, page, limit);
   }
 }

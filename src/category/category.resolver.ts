@@ -42,8 +42,13 @@ export class CategoryResolver {
   }
 
   @ResolveProperty()
-  async posts(@Parent() category) {
+  async posts(
+    @Parent() category,
+    @Args('page') page: number,
+    @Args('limit') limit: number,
+    @Args('newest') newest: boolean,
+  ) {
     const { id } = category;
-    return await this.postService.showByCategory(id);
+    return await this.postService.showByCategory(id, page, limit, newest);
   }
 }

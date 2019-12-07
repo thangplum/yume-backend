@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { ReplyEntity } from '../reply/reply.entity';
@@ -26,4 +27,8 @@ export class CommentEntity {
 
   @ManyToOne(type => ReplyEntity, reply => reply.comments)
   reply: ReplyEntity;
+
+  @ManyToMany(type => UserEntity, { cascade: true })
+  @JoinTable()
+  likes: UserEntity[];
 }

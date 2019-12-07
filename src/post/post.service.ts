@@ -1,5 +1,11 @@
-import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import {
+  Injectable,
+  Inject,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
+import { Repository, LessThan, MoreThan, FindOperator } from 'typeorm';
 import { PostEntity } from './post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostDTO } from './post.dto';
@@ -38,23 +44,105 @@ export class PostService {
 
   async showAll(
     page: number = 1,
+    limit: number = 25,
     newest?: boolean,
   ): Promise<PostResponseDTO[]> {
     const posts = await this.postRepository.find({
       relations: ['author', 'likes', 'replies', 'category'],
-      take: 25,
-      skip: 25 * (page - 1),
+      take: limit,
+      skip: limit * (page - 1),
       order: newest && { created: 'DESC' },
     });
     return posts.map(post => this.toResponseObject(post));
   }
 
-  async showByCategory(categoryId: string, page: number = 1) {
+  async showPostConnection(
+    first?: number,
+    after?: string,
+    last?: number,
+    before?: string,
+    category?: string,
+  ) {
+    const where: any = {};
+
+    if (category) {
+      where.category = category;
+    }
+
+    if (!first && !last) {
+      first = 10;
+    }
+    // posts are displayed newest to oldest
+    // before is newer posts (created > cursor)
+    if (before) {
+      before = new Date(Number(before)).toUTCString();
+      where.created = MoreThan(before);
+    }
+
+    // after is older posts (created < cursor)
+    if (after) {
+      after = new Date(Number(after)).toUTCString();
+      where.created = LessThan(after);
+    }
+
+    const posts = await this.postRepository.find({
+      where,
+      order: { created: 'DESC' },
+      take: first || last,
+      relations: ['author', 'likes', 'replies', 'category'],
+    });
+    const edges = posts.map(post => ({
+      node: post,
+      cursor: post.created,
+    }));
+
+    const hasNextPage = async () => {
+      if (posts.length < (last || first)) {
+        return false;
+      }
+      const prev = posts[posts.length - 1].created;
+      const post = await this.postRepository.findOne({
+        where: {
+          created: before ? MoreThan(prev) : LessThan(prev),
+          order: { created: 'DESC' },
+        },
+      });
+      return !!post;
+    };
+
+    const hasPreviousPage = async () => {
+      if (posts.length === 0) {
+        return false;
+      }
+      const post = await this.postRepository.findOne({
+        where: {
+          created: where.created,
+          order: { created: 'ASC' },
+        },
+      });
+      return !!post;
+    };
+    return {
+      edges,
+      pageInfo: {
+        hasNextPage: await hasNextPage(),
+        hasPreviousPage: await hasPreviousPage(),
+      },
+    };
+  }
+
+  async showByCategory(
+    categoryId: string,
+    page: number = 1,
+    limit: number = 25,
+    newest: boolean = true,
+  ) {
     const posts = await this.postRepository.find({
       where: { category: categoryId },
       relations: ['author', 'likes', 'replies'],
-      take: 25,
-      skip: 25 * (page - 1),
+      take: limit,
+      skip: limit * (page - 1),
+      order: newest && { created: 'DESC' },
     });
     return posts.map(post => this.toResponseObject(post));
   }

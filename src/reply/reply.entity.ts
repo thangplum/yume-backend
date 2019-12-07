@@ -6,6 +6,7 @@ import {
   ManyToOne,
   JoinTable,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { PostEntity } from '../post/post.entity';
@@ -31,4 +32,8 @@ export class ReplyEntity {
 
   @OneToMany(type => CommentEntity, comment => comment.reply, { cascade: true })
   comments: CommentEntity[];
+
+  @ManyToMany(type => UserEntity, { cascade: true })
+  @JoinTable()
+  likes: UserEntity[];
 }

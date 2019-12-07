@@ -46,8 +46,19 @@ export class ReplyResolver {
   }
 
   @ResolveProperty()
-  async comments(@Parent() reply) {
+  async comments(
+    @Parent() reply,
+    @Args('page') page: number,
+    @Args('limit') limit: number,
+  ) {
     const { id } = reply;
-    return await this.commentService.showByReply(id);
+    return await this.commentService.showByReply(id, page, limit);
+  }
+
+  @Mutation()
+  @UseGuards(GqlAuthGuard)
+  async likeReply(@Args('id') id: string, @CurrentUser() user) {
+    const { id: userId } = user;
+    return await this.replyService.like(id, userId);
   }
 }

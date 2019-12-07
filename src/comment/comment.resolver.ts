@@ -32,4 +32,11 @@ export class CommentResolver {
     const { id: userId } = user;
     return await this.commentService.deleteComment(id, userId);
   }
+
+  @Mutation()
+  @UseGuards(GqlAuthGuard)
+  async likeComment(@Args('id') id: string, @CurrentUser() user) {
+    const { id: userId } = user;
+    return await this.commentService.like(id, userId);
+  }
 }

@@ -2,7 +2,8 @@ type Reply {
   id: ID!
   created: String!
   comment: String!
-  comments: [Comment!]
+  comments(page: Int, limit: Int): [Comment!]
+  likes: Int
 }
 
 type Query {
@@ -12,4 +13,5 @@ type Query {
 type Mutation {
   createReply(post: ID!, comment: String!): Reply
   deleteReply(id: ID!): Reply
+  likeReply(id: ID!): Reply
 }
