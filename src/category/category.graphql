@@ -4,7 +4,7 @@ type Category {
   slug: String!
   parent: Category
   children: [Category]
-  posts(page: Int, limit: Int, newest: Boolean): [Post!]
+  posts(page: Int, limit: Int, newest: Boolean): PaginatedPost!
 }
 
 type Query {

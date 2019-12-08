@@ -12,7 +12,7 @@ type Post {
 }
 
 type Query {
-  posts(page: Int, limit: Int, newest: Boolean): [Post!]
+  posts(page: Int, limit: Int, newest: Boolean): PaginatedPost!
   post(id: ID!): Post!
   postBySlug(slug: String!): Post!
   # posts(first: Int, after: String, last: Int, before: String): PostConnection # for cursor pagination
@@ -25,6 +25,11 @@ type Mutation {
   likePost(id: ID!): Post!
   bookmark(id: ID!): User!
   unbookmark(id: ID!): User!
+}
+
+type PaginatedPost {
+  nodes: [Post!]
+  pages: Int!
 }
 
 # For cursor based pagination

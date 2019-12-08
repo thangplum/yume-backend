@@ -3,6 +3,7 @@ type Comment {
   created: String!
   comment: String!
   likes: Int
+  author: User
 }
 
 type Query {

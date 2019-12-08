@@ -10,7 +10,6 @@ import { PostEntity } from './post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostDTO } from './post.dto';
 import { UserEntity } from '../user/user.entity';
-import { isDeclaration } from '@babel/types';
 import { PostResponseDTO } from './post-response.dto';
 import { CategoryEntity } from '../category/category.entity';
 
@@ -42,18 +41,19 @@ export class PostService {
     }
   }
 
-  async showAll(
-    page: number = 1,
-    limit: number = 25,
-    newest?: boolean,
-  ): Promise<PostResponseDTO[]> {
+  async showAll(page: number = 1, limit: number = 25, newest?: boolean) {
+    const postCount = await this.postRepository.count();
+    const pages = Math.ceil(postCount / limit);
     const posts = await this.postRepository.find({
       relations: ['author', 'likes', 'replies', 'category'],
       take: limit,
       skip: limit * (page - 1),
       order: newest && { created: 'DESC' },
     });
-    return posts.map(post => this.toResponseObject(post));
+    return {
+      pages,
+      nodes: posts.map(post => this.toResponseObject(post)),
+    };
   }
 
   async showPostConnection(
@@ -137,14 +137,49 @@ export class PostService {
     limit: number = 25,
     newest: boolean = true,
   ) {
-    const posts = await this.postRepository.find({
-      where: { category: categoryId },
-      relations: ['author', 'likes', 'replies'],
-      take: limit,
-      skip: limit * (page - 1),
-      order: newest && { created: 'DESC' },
+    const category = await this.categoryRepository.findOne({
+      where: { id: categoryId },
+      relations: ['children'],
     });
-    return posts.map(post => this.toResponseObject(post));
+    if (!category.parent) {
+      // this is parent category
+      // so get posts from all sub categories
+      const where = category.children.map(child => {
+        return { category: child.id };
+      });
+      const postCount = await this.postRepository.count({
+        where,
+      });
+      const pages = Math.ceil(postCount / limit);
+      const posts = await this.postRepository.find({
+        where,
+        relations: ['author', 'likes', 'replies'],
+        take: limit,
+        skip: limit * (page - 1),
+        order: newest && { created: 'DESC' },
+      });
+      return {
+        pages,
+        nodes: posts.map(post => this.toResponseObject(post)),
+      };
+    } else {
+      const postCount = await this.postRepository.count({
+        where: { category: categoryId },
+      });
+      const pages = Math.ceil(postCount / limit);
+
+      const posts = await this.postRepository.find({
+        where: { category: categoryId },
+        relations: ['author', 'likes', 'replies'],
+        take: limit,
+        skip: limit * (page - 1),
+        order: newest && { created: 'DESC' },
+      });
+      return {
+        pages,
+        nodes: posts.map(post => this.toResponseObject(post)),
+      };
+    }
   }
 
   async create(
@@ -185,7 +220,7 @@ export class PostService {
   async showBySlug(slug: string): Promise<PostResponseDTO> {
     const post = await this.postRepository.findOne({
       where: { slug },
-      relations: ['author', 'likes', 'replies', 'category'],
+      relations: ['author', 'likes', 'category'],
     });
     if (!post) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);

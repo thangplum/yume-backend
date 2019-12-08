@@ -4,6 +4,7 @@ type Reply {
   comment: String!
   comments(page: Int, limit: Int): [Comment!]
   likes: Int
+  author: User
 }
 
 type Query {

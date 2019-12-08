@@ -33,6 +33,12 @@ export class UserEntity {
   })
   username: string;
 
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
   @Column({ type: 'text', select: true })
   @Exclude()
   password: string;
@@ -53,8 +59,15 @@ export class UserEntity {
   }
 
   toResponseObject(showToken: boolean = true): UserResponseDTO {
-    const { id, created, username, email } = this;
-    const responseObj: any = { id, created, username, email };
+    const { id, created, username, email, firstName, lastName } = this;
+    const responseObj: any = {
+      id,
+      created,
+      username,
+      email,
+      firstName,
+      lastName,
+    };
     // if (showToken) {
     //   responseObj.token = token;
     // }
