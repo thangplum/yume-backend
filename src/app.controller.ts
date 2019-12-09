@@ -4,6 +4,7 @@ import {
   UseGuards,
   Post,
   Request,
+  Response,
   Body,
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -27,8 +28,16 @@ export class AppController {
 
   @UseGuards(AuthGuard('local'))
   @Post('auth/login')
-  async login(@Request() req) {
-    return await this.authService.login(req.user);
+  async login(@Request() req, @Response() res) {
+    const { access_token, user } = await this.authService.login(req.user);
+    res.cookie('token', access_token, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+      secure: false,
+      httpOnly: true,
+      sameSite: true,
+    });
+    res.status(200);
+    res.send(user);
   }
 
   /**
@@ -36,8 +45,16 @@ export class AppController {
    * @param data
    */
   @Post('auth/register')
-  async register(@Body() data: UserRegisterDTO) {
-    const user = await this.userService.register(data);
-    return this.authService.login(user);
+  async register(@Body() data: UserRegisterDTO, @Response() res) {
+    const userData = await this.userService.register(data);
+    const { access_token, user } = await this.authService.login(userData);
+    res.cookie('token', access_token, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
+      secure: false,
+      httpOnly: true,
+      sameSite: true,
+    });
+    res.status(200);
+    res.send(user);
   }
 }
