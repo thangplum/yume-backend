@@ -29,8 +29,8 @@ export class AppController {
   @UseGuards(AuthGuard('local'))
   @Post('auth/login')
   async login(@Request() req, @Response() res) {
-    const { access_token, user } = await this.authService.login(req.user);
-    res.cookie('token', access_token, {
+    const user = await this.authService.login(req.user);
+    res.cookie('token', user.access_token, {
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
       secure: false,
       httpOnly: true,
@@ -47,8 +47,8 @@ export class AppController {
   @Post('auth/register')
   async register(@Body() data: UserRegisterDTO, @Response() res) {
     const userData = await this.userService.register(data);
-    const { access_token, user } = await this.authService.login(userData);
-    res.cookie('token', access_token, {
+    const user = await this.authService.login(userData);
+    res.cookie('token', user.access_token, {
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24), // 1 day
       secure: false,
       httpOnly: true,

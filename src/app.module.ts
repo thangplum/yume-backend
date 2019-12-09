@@ -22,6 +22,11 @@ import { CategoryModule } from './category/category.module';
     GraphQLModule.forRoot({
       typePaths: ['./**/*.graphql'],
       context: ({ req }) => ({ req }),
+      cors: {
+        origin: 'http://localhost:3000',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        credentials: true,
+      },
     }),
     ConfigModule,
     AuthModule,
