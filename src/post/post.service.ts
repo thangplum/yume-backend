@@ -139,7 +139,7 @@ export class PostService {
   ) {
     const category = await this.categoryRepository.findOne({
       where: { id: categoryId },
-      relations: ['children'],
+      relations: ['children', 'parent'],
     });
     if (!category.parent) {
       // this is parent category

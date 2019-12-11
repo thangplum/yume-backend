@@ -22,9 +22,9 @@ export class CategoryService {
     return categories;
   }
 
-  async show(id: string) {
+  async show(slug: string) {
     const category = await this.categoryRepository.findOne({
-      where: { id },
+      where: { slug },
       relations: ['parent', 'children'],
     });
     if (!category) {

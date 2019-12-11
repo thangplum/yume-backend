@@ -8,7 +8,7 @@ type Category {
 }
 
 type Query {
-  category(id: ID!): Category
+  category(slug: String!): Category
   categoryBySlug(slug: String!): Category
   categories: [Category!]
   forumCategories: [Category!]

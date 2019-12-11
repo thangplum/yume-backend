@@ -23,8 +23,8 @@ export class CategoryResolver {
   }
 
   @Query('category')
-  async category(@Args('id') id: string) {
-    return await this.categoryService.show(id);
+  async category(@Args('slug') slug: string) {
+    return await this.categoryService.show(slug);
   }
 
   @Query('categoryBySlug')
