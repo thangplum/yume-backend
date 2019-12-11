@@ -23,7 +23,8 @@ export class CommentService {
       responseObject.author = comment.author.toResponseObject(false);
     }
     if (responseObject.likes) {
-      responseObject.likes = comment.likes.length;
+      responseObject.numLikes = comment.likes.length;
+      responseObject.likes = responseObject.likes.map(liker => liker.id);
     }
     return responseObject;
   }

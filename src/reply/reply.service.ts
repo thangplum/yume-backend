@@ -23,7 +23,8 @@ export class ReplyService {
       responseObject.author = reply.author.toResponseObject(false);
     }
     if (responseObject.likes) {
-      responseObject.likes = reply.likes.length;
+      responseObject.numLikes = reply.likes.length;
+      responseObject.likes = responseObject.likes.map(liker => liker.id);
     }
     return responseObject;
   }

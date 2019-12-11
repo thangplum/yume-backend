@@ -6,7 +6,8 @@ type Post {
   comment: String!
   category: Category!
   author: User
-  likes: Int
+  numLikes: Int
+  likes: [String]
   slug: String!
   replies(page: Int, limit: Int): [Reply!]
 }

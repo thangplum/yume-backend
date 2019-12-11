@@ -3,7 +3,8 @@ type Reply {
   created: String!
   comment: String!
   comments(page: Int, limit: Int): [Comment!]
-  likes: Int
+  numLikes: Int
+  likes: [String]
   author: User
 }
 

@@ -30,7 +30,8 @@ export class PostService {
       author: post.author.toResponseObject(false),
     };
     if (responseObject.likes) {
-      responseObject.likes = post.likes.length;
+      responseObject.numLikes = post.likes.length;
+      responseObject.likes = responseObject.likes.map(liker => liker.id);
     }
     return responseObject;
   }
@@ -193,9 +194,16 @@ export class PostService {
     }
     const category = await this.categoryRepository.findOne({
       where: { id: categoryId },
+      relations: ['parent'],
     });
     if (!category) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+    }
+    if (!category.parent) {
+      throw new HttpException(
+        'Cannot create a post on primary forum category',
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const post = await this.postRepository.create({
       ...data,
