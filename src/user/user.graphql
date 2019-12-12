@@ -24,6 +24,7 @@ type Query {
 type Mutation {
   login(email: String!, password: String!): Auth!
   register(email: String!, password: String!, username: String!): Auth!
+  updateUser(firstName: String!, lastName: String!): User!
 }
 # export class UserResponseDTO {
 #   id: string;

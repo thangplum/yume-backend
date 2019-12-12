@@ -55,4 +55,26 @@ export class UserService {
     await this.userRepository.save(user);
     return user.toResponseObject();
   }
+
+  async updateUser(
+    id: string,
+    firstName: string,
+    lastName: string,
+    username: string,
+  ) {
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new HttpException('User does not exist', HttpStatus.BAD_REQUEST);
+    }
+    user.firstName = firstName;
+    user.lastName = lastName;
+    const updatedUser = await this.userRepository.update(
+      { id },
+      {
+        firstName,
+        lastName,
+      },
+    );
+    return user.toResponseObject();
+  }
 }

@@ -5,8 +5,16 @@ import { jwtConstants } from './constants';
 
 const cookieExtractor: JwtFromRequestFunction = req => {
   let token = null;
-  if (req && req.cookies) {
+  if (req && req.cookies && req.cookies.token) {
     token = req.cookies.token;
+  }
+  // only check for token in header in developement (less secure)
+  if (
+    process.env.NODE_ENV === 'development' &&
+    req.headers.authorization &&
+    req.headers.authorization.split(' ')[0] === 'Bearer'
+  ) {
+    token = req.headers.authorization.split(' ')[1];
   }
   return token;
 };

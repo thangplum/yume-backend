@@ -4,6 +4,7 @@ import {
   Args,
   ResolveProperty,
   Parent,
+  Mutation,
 } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { ReplyService } from '../reply/reply.service';
@@ -39,5 +40,22 @@ export class UserResolver {
   async replies(@Parent() user) {
     const { id } = user;
     return await this.replyService.showByUser(id);
+  }
+
+  @Mutation()
+  @UseGuards(GqlAuthGuard)
+  async updateUser(
+    @Args('firstName') firstName: string,
+    @Args('lastName') lastName: string,
+    @Args('username') username: string,
+    @CurrentUser() user,
+  ) {
+    const { id: userId } = user;
+    return await this.userService.updateUser(
+      userId,
+      firstName,
+      lastName,
+      username,
+    );
   }
 }
