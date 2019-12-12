@@ -46,10 +46,14 @@ export class UserService {
   }
 
   async register(data: UserRegisterDTO): Promise<UserResponseDTO> {
-    const { email } = data;
+    const { email, username } = data;
     let user = await this.userRepository.findOne({ where: { email } });
     if (user) {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    }
+    user = await this.userRepository.findOne({ where: { username } });
+    if (user) {
+      throw new HttpException('Username is taken', HttpStatus.BAD_REQUEST);
     }
     user = await this.userRepository.create(data);
     await this.userRepository.save(user);
