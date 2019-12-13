@@ -57,4 +57,16 @@ export class AppController {
     res.status(200);
     res.send(user);
   }
+
+  @Post('/logout')
+  async logout(@Response() res) {
+    res.cookie('token', '', {
+      expires: new Date(Date.now()), // 1 day
+      secure: false,
+      httpOnly: true,
+      sameSite: true,
+    });
+    res.status(200);
+    res.send();
+  }
 }
