@@ -24,7 +24,7 @@ export class AuthService {
      * So, the decoded payload from user will also only have these values
      * Payload : {email, id}
      */
-    const payload = { email: user.email, id: user.id };
+    const payload = { id: user.id, username: user.username };
     return {
       access_token: this.jwtService.sign(payload),
       user,

@@ -16,6 +16,7 @@ type Query {
   posts(page: Int, limit: Int, newest: Boolean): PaginatedPost!
   post(id: ID!): Post!
   postBySlug(slug: String!): Post!
+  searchPost(query: String!, page: Int, limit: Int): PaginatedPost!
   # posts(first: Int, after: String, last: Int, before: String): PostConnection # for cursor pagination
 }
 

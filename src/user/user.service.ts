@@ -22,9 +22,9 @@ export class UserService {
     return users.map(user => user.toResponseObject(false));
   }
 
-  async read(email: string) {
+  async read(username: string) {
     const user = await this.userRepository.findOne({
-      where: { email },
+      where: { username },
       relations: ['posts', 'bookmarks'],
     });
     if (!user) {

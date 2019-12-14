@@ -64,7 +64,7 @@ export class UserEntity {
       id,
       created,
       username,
-      email,
+      // email,
       firstName,
       lastName,
     };

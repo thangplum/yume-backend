@@ -54,6 +54,22 @@ $ npm run test:cov
 $ npx compodoc -p tsconfig.json -s
 ```
 
+## Writing migrations
+
+Migration files are created with "migrations" directory and postfixed with a timestamp. The migration tool looks at timestamp and also a migration table in the db, to see which migrations have been run
+
+To create a new migration
+
+```bash
+npx typeorm migration:create -n <name>
+```
+
+To run a migration
+
+```bash
+npx ts-node ./node_modules/.bin/typeorm migration:run
+```
+
 ## Stay in touch
 
 - Website - [https://yume.me](https://yume.me/)

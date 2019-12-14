@@ -30,6 +30,15 @@ export class PostController {
     return this.postService.showAll(page, 25, true);
   }
 
+  @Get('/search')
+  async searchInPost(
+    @Query('query') query: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return await this.postService.searchInPost(query, page, limit);
+  }
+
   @Post(':categoryId')
   @UseGuards(AuthGuard('jwt'))
   createPost(

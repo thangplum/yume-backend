@@ -42,6 +42,51 @@ export class PostService {
     }
   }
 
+  async searchInPost(query: string, page: number = 1, limit: number = 10) {
+    if (limit < 0 || page < 1) {
+      throw new HttpException(
+        'Bad values for page/limit',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const queryString = `
+      SELECT * FROM post
+        WHERE to_tsvector(post.caption) @@ plainto_tsquery($1)
+          OR to_tsvector(post.comment) @@ plainto_tsquery($2)
+          ORDER BY post.created DESC, post.id ASC
+          LIMIT 100`;
+    //       LIMIT ${limit}
+    //       OFFSET ${limit * (page - 1)}
+    // `;
+
+    const posts = await this.postRepository.query(queryString, [query, query]);
+    const pages = Math.ceil(posts.length / limit);
+    const postIds = posts.map(post => {
+      return { id: post.id };
+    });
+
+    if (!postIds.length) {
+      return {
+        pages: 0,
+        nodes: [],
+      };
+    }
+
+    const allPosts = await this.postRepository.find({
+      relations: ['author', 'likes', 'replies', 'category'],
+      where: postIds,
+      order: { created: 'DESC' },
+      take: limit,
+      skip: limit * (page - 1),
+    });
+
+    return {
+      pages,
+      nodes: allPosts.map(post => this.toResponseObject(post)),
+    };
+  }
+
   async showAll(page: number = 1, limit: number = 25, newest?: boolean) {
     const postCount = await this.postRepository.count();
     const pages = Math.ceil(postCount / limit);
@@ -154,7 +199,7 @@ export class PostService {
       const pages = Math.ceil(postCount / limit);
       const posts = await this.postRepository.find({
         where,
-        relations: ['author', 'likes', 'replies'],
+        relations: ['author', 'likes'],
         take: limit,
         skip: limit * (page - 1),
         order: newest && { created: 'DESC' },
@@ -171,7 +216,7 @@ export class PostService {
 
       const posts = await this.postRepository.find({
         where: { category: categoryId },
-        relations: ['author', 'likes', 'replies'],
+        relations: ['author', 'likes'],
         take: limit,
         skip: limit * (page - 1),
         order: newest && { created: 'DESC' },

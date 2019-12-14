@@ -55,6 +55,15 @@ export class PostResolver {
     return await this.postService.showBySlug(slug);
   }
 
+  @Query('searchPost')
+  async searchPost(
+    @Args('query') query: string,
+    @Args('page') page: number,
+    @Args('limit') limit: number,
+  ) {
+    return await this.postService.searchInPost(query, page, limit);
+  }
+
   @Mutation()
   @UseGuards(GqlAuthGuard)
   async createPost(

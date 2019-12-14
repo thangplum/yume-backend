@@ -32,8 +32,8 @@ export class UserResolver {
   @Query()
   @UseGuards(GqlAuthGuard)
   async whoami(@CurrentUser() user) {
-    const { email } = user;
-    return await this.userService.read(email);
+    const { username } = user;
+    return await this.userService.read(username);
   }
 
   @ResolveProperty()
