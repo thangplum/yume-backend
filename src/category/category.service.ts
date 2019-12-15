@@ -23,25 +23,25 @@ export class CategoryService {
   }
 
   async show(slug: string) {
-    const category = await this.categoryRepository.findOne({
+    const category = await this.categoryRepository.find({
       where: { slug },
       relations: ['parent', 'children'],
     });
-    if (!category) {
+    if (!category.length) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-    return category;
+    return category[0];
   }
 
   async showBySlug(slug: string) {
-    const category = await this.categoryRepository.findOne({
+    const category = await this.categoryRepository.find({
       where: { slug },
       relations: ['parent', 'children'],
     });
-    if (!category) {
+    if (!category.length) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-    return category;
+    return category[0];
   }
 
   async showForumCategory() {

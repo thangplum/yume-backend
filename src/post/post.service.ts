@@ -102,6 +102,7 @@ export class PostService {
     };
   }
 
+  // Cursor based pagination implementation. Not using this right now.
   async showPostConnection(
     first?: number,
     after?: string,
@@ -185,47 +186,32 @@ export class PostService {
   ) {
     const category = await this.categoryRepository.findOne({
       where: { id: categoryId },
-      relations: ['children', 'parent'],
+      relations: ['children'],
     });
-    if (!category.parent) {
-      // this is parent category
-      // so get posts from all sub categories
-      const where = category.children.map(child => {
+    let where = [{ category: categoryId }];
+
+    // Note check the length here for proper checking since sub category will have empty array
+    if (category.children.length) {
+      // this is parent category, so get posts from all sub categories
+      where = category.children.map(child => {
         return { category: child.id };
       });
-      const postCount = await this.postRepository.count({
-        where,
-      });
-      const pages = Math.ceil(postCount / limit);
-      const posts = await this.postRepository.find({
-        where,
-        relations: ['author', 'likes'],
-        take: limit,
-        skip: limit * (page - 1),
-        order: newest && { created: 'DESC' },
-      });
-      return {
-        pages,
-        nodes: posts.map(post => this.toResponseObject(post)),
-      };
-    } else {
-      const postCount = await this.postRepository.count({
-        where: { category: categoryId },
-      });
-      const pages = Math.ceil(postCount / limit);
-
-      const posts = await this.postRepository.find({
-        where: { category: categoryId },
-        relations: ['author', 'likes'],
-        take: limit,
-        skip: limit * (page - 1),
-        order: newest && { created: 'DESC' },
-      });
-      return {
-        pages,
-        nodes: posts.map(post => this.toResponseObject(post)),
-      };
     }
+    const postCount = await this.postRepository.count({
+      where,
+    });
+    const pages = Math.ceil(postCount / limit);
+    const posts = await this.postRepository.find({
+      where,
+      relations: ['author', 'likes'],
+      take: limit,
+      skip: limit * (page - 1),
+      order: newest && { created: 'DESC' },
+    });
+    return {
+      pages,
+      nodes: posts.map(post => this.toResponseObject(post)),
+    };
   }
 
   async create(
@@ -260,25 +246,25 @@ export class PostService {
   }
 
   async show(id: string): Promise<PostResponseDTO> {
-    const post = await this.postRepository.findOne({
+    const post = await this.postRepository.find({
       where: { id },
       relations: ['author', 'likes', 'replies', 'category'],
     });
-    if (!post) {
+    if (!post.length) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-    return this.toResponseObject(post);
+    return this.toResponseObject(post[0]);
   }
 
   async showBySlug(slug: string): Promise<PostResponseDTO> {
-    const post = await this.postRepository.findOne({
+    const post = await this.postRepository.find({
       where: { slug },
       relations: ['author', 'likes', 'category'],
     });
-    if (!post) {
+    if (!post || !post.length) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
-    return this.toResponseObject(post);
+    return this.toResponseObject(post[0]);
   }
 
   async update(

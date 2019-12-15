@@ -6,6 +6,7 @@ import {
   ManyToOne,
   JoinTable,
   ManyToMany,
+  Index,
 } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { ReplyEntity } from '../reply/reply.entity';
@@ -25,6 +26,7 @@ export class CommentEntity {
   @JoinTable()
   author: UserEntity;
 
+  @Index()
   @ManyToOne(type => ReplyEntity, reply => reply.comments)
   reply: ReplyEntity;
 
