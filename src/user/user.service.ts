@@ -15,7 +15,7 @@ export class UserService {
 
   async showAll(page: number = 1): Promise<UserResponseDTO[]> {
     const users = await this.userRepository.find({
-      relations: ['bookmarks', 'posts'],
+      relations: ['bookmarks'],
       take: 25,
       skip: 25 * (page - 1),
     });
@@ -23,14 +23,14 @@ export class UserService {
   }
 
   async read(username: string) {
-    const user = await this.userRepository.findOne({
+    const user = await this.userRepository.find({
       where: { username },
-      relations: ['posts', 'bookmarks'],
+      relations: ['bookmarks'],
     });
-    if (!user) {
+    if (!user.length) {
       throw new HttpException('User does not exist', HttpStatus.BAD_REQUEST);
     }
-    return user.toResponseObject(false);
+    return user[0].toResponseObject(false);
   }
 
   async login(data: UserLoginDTO): Promise<UserResponseDTO> {

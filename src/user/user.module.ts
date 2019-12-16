@@ -8,9 +8,18 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UserResolver } from './user.resolver';
 import { ReplyEntity } from '../reply/reply.entity';
 import { ReplyService } from '../reply/reply.service';
+import { PostService } from '../post/post.service';
+import { CategoryEntity } from '../category/category.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, PostEntity, ReplyEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      UserEntity,
+      PostEntity,
+      ReplyEntity,
+      CategoryEntity,
+    ]),
+  ],
   controllers: [UserController],
   providers: [
     UserService,
@@ -20,6 +29,7 @@ import { ReplyService } from '../reply/reply.service';
     },
     UserResolver,
     ReplyService,
+    PostService,
   ],
   exports: [UserService],
 })

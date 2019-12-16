@@ -30,21 +30,6 @@ export class PostResolver {
     return await this.postService.showAll(page, limit, newest);
   }
 
-  // posts implementation using cursor
-  async postsCursor(
-    @Args('first') first: number,
-    @Args('after') after: string,
-    @Args('last') last: number,
-    @Args('before') before: string,
-  ) {
-    return await this.postService.showPostConnection(
-      first,
-      after,
-      last,
-      before,
-    );
-  }
-
   @Query('post')
   async post(@Args('id') id: string) {
     return await this.postService.show(id);

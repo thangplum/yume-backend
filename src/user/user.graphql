@@ -6,7 +6,7 @@ type User {
   email: String!
   created: String!
   bookmarks: [Post!]
-  posts: [Post!]
+  posts(page: Int, limit: Int, newest: Boolean): PaginatedPost!
   replies: [Reply!]
 }
 
@@ -17,7 +17,7 @@ type Auth {
 
 type Query {
   users(page: Int): [User!]
-  user(email: String!): User
+  user(username: String!): User
   whoami: User
 }
 

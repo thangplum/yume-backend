@@ -11,12 +11,14 @@ import { ReplyService } from '../reply/reply.service';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/gql.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
+import { PostService } from '../post/post.service';
 
 @Resolver('User')
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
     private readonly replyService: ReplyService,
+    private readonly postService: PostService,
   ) {}
 
   @Query('users')
@@ -25,8 +27,8 @@ export class UserResolver {
   }
 
   @Query()
-  async user(@Args('email') email: string) {
-    return await this.userService.read(email);
+  async user(@Args('username') username: string) {
+    return await this.userService.read(username);
   }
 
   @Query()
@@ -40,6 +42,18 @@ export class UserResolver {
   async replies(@Parent() user) {
     const { id } = user;
     return await this.replyService.showByUser(id);
+  }
+
+  @ResolveProperty()
+  async posts(
+    @Parent() user,
+    @Args('page') page: number,
+    @Args('limit') limit: number,
+    @Args('newest') newest: boolean,
+  ) {
+    const { id } = user;
+    const posts = await this.postService.showByUser(id, page, limit, newest);
+    return posts;
   }
 
   @Mutation()
