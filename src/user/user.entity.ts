@@ -53,13 +53,32 @@ export class UserEntity {
   @JoinTable()
   bookmarks: PostEntity[];
 
+  @Column({ nullable: true })
+  college: string;
+
+  @Column({ nullable: true })
+  major: string;
+
+  @Column({ nullable: true })
+  location: string;
+
   @BeforeInsert()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
   toResponseObject(showToken: boolean = true): UserResponseDTO {
-    const { id, created, username, email, firstName, lastName } = this;
+    const {
+      id,
+      created,
+      username,
+      email,
+      firstName,
+      lastName,
+      college,
+      major,
+      location,
+    } = this;
     const responseObj: any = {
       id,
       created,
@@ -67,6 +86,9 @@ export class UserEntity {
       // email,
       firstName,
       lastName,
+      college,
+      major,
+      location,
     };
     // if (showToken) {
     //   responseObj.token = token;

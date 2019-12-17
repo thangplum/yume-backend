@@ -61,7 +61,9 @@ export class UserResolver {
   async updateUser(
     @Args('firstName') firstName: string,
     @Args('lastName') lastName: string,
-    @Args('username') username: string,
+    @Args('major') major: string,
+    @Args('college') college: string,
+    @Args('location') location: string,
     @CurrentUser() user,
   ) {
     const { id: userId } = user;
@@ -69,7 +71,9 @@ export class UserResolver {
       userId,
       firstName,
       lastName,
-      username,
+      major,
+      college,
+      location,
     );
   }
 }

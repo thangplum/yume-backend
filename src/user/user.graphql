@@ -8,6 +8,9 @@ type User {
   bookmarks: [Post!]
   posts(page: Int, limit: Int, newest: Boolean): PaginatedPost!
   replies: [Reply!]
+  college: String
+  major: String
+  location: String
 }
 
 type Auth {
@@ -24,7 +27,13 @@ type Query {
 type Mutation {
   login(email: String!, password: String!): Auth!
   register(email: String!, password: String!, username: String!): Auth!
-  updateUser(firstName: String!, lastName: String!): User!
+  updateUser(
+    firstName: String!
+    lastName: String!
+    major: String!
+    college: String!
+    location: String!
+  ): User!
 }
 # export class UserResponseDTO {
 #   id: string;

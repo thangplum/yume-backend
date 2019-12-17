@@ -64,7 +64,9 @@ export class UserService {
     id: string,
     firstName: string,
     lastName: string,
-    username: string,
+    major: string,
+    college: string,
+    location: string,
   ) {
     const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
@@ -72,11 +74,17 @@ export class UserService {
     }
     user.firstName = firstName;
     user.lastName = lastName;
+    user.major = major;
+    user.college = college;
+    user.location = location;
     const updatedUser = await this.userRepository.update(
       { id },
       {
         firstName,
         lastName,
+        major,
+        college,
+        location,
       },
     );
     return user.toResponseObject();
