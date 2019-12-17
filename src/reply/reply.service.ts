@@ -22,17 +22,22 @@ export class ReplyService {
     if (reply.author) {
       responseObject.author = reply.author.toResponseObject(false);
     }
-    if (responseObject.likes) {
-      responseObject.numLikes = reply.likes.length;
-      responseObject.likes = responseObject.likes.map(liker => liker.id);
+    if (responseObject.upvotes) {
+      responseObject.upvotes = responseObject.upvotes.map(voter => voter.id);
     }
+    if (responseObject.downvotes) {
+      responseObject.downvotes = responseObject.downvotes.map(
+        voter => voter.id,
+      );
+    }
+    responseObject.rating = reply.upvotes.length - reply.downvotes.length;
     return responseObject;
   }
 
   async showByPost(postId: string, page: number = 1, limit: number = 25) {
     const replies = await this.replyRepository.find({
       where: { post: { id: postId } },
-      relations: ['author', 'likes'],
+      relations: ['author', 'upvotes', 'downvotes'],
       take: limit,
       skip: limit * (page - 1),
       order: { created: 'DESC' },
@@ -43,7 +48,7 @@ export class ReplyService {
   async showByUser(userId: string, page: number = 1) {
     const replies = await this.replyRepository.find({
       where: { author: { id: userId } },
-      relations: ['post', 'likes'],
+      relations: ['post', 'upvotes', 'downvotes'],
       take: 25,
       skip: 25 * (page - 1),
     });
@@ -71,7 +76,7 @@ export class ReplyService {
   async show(id: string) {
     const reply = await this.replyRepository.findOne({
       where: { id },
-      relations: ['author', 'post', 'likes'],
+      relations: ['author', 'post', 'upvotes', 'downvotes'],
     });
     if (!reply) {
       throw new HttpException('Reply does not exist', HttpStatus.BAD_REQUEST);
@@ -97,19 +102,53 @@ export class ReplyService {
     return this.toResponseObject(reply);
   }
 
-  async like(id: string, userId: string) {
+  async upvote(id: string, userId: string) {
     const reply = await this.replyRepository.findOne({
       where: { id },
-      relations: ['author', 'post', 'likes', 'comments'],
+      relations: ['author', 'post', 'upvotes', 'downvotes', 'comments'],
     });
     if (!reply) {
       throw new HttpException('Reply not found', HttpStatus.NOT_FOUND);
     }
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (reply.likes.filter(liker => liker.id === user.id).length > 0) {
-      reply.likes = reply.likes.filter(liker => liker.id !== user.id);
+
+    // check if reply is already downvoted
+    if (reply.downvotes.filter(voter => voter.id === user.id).length > 0) {
+      // if already downvoted, then remove downvote
+      reply.downvotes = reply.downvotes.filter(voter => voter.id !== user.id);
+    }
+    // check if reply is already upvoted, and only upvote if not
+    if (reply.upvotes.filter(voter => voter.id === user.id).length === 0) {
+      reply.upvotes.push(user);
     } else {
-      reply.likes.push(user);
+      reply.upvotes = reply.upvotes.filter(voter => voter.id !== user.id);
+    }
+
+    await this.replyRepository.save(reply);
+    return this.toResponseObject(reply);
+  }
+
+  async downvote(id: string, userId: string) {
+    const reply = await this.replyRepository.findOne({
+      where: { id },
+      relations: ['author', 'post', 'upvotes', 'downvotes', 'comments'],
+    });
+    if (!reply) {
+      throw new HttpException('Reply not found', HttpStatus.NOT_FOUND);
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    // check if reply is already upvoted
+    if (reply.upvotes.filter(voter => voter.id === user.id).length > 0) {
+      // if upvoted remove the upvote
+      reply.upvotes = reply.upvotes.filter(voter => voter.id !== user.id);
+    }
+
+    // check if reply is already downvoted, and only upvote if not
+    if (reply.downvotes.filter(voter => voter.id === user.id).length === 0) {
+      reply.downvotes.push(user);
+    } else {
+      reply.downvotes = reply.downvotes.filter(voter => voter.id !== user.id);
     }
     await this.replyRepository.save(reply);
     return this.toResponseObject(reply);

@@ -57,8 +57,15 @@ export class ReplyResolver {
 
   @Mutation()
   @UseGuards(GqlAuthGuard)
-  async likeReply(@Args('id') id: string, @CurrentUser() user) {
+  async upvoteReply(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
-    return await this.replyService.like(id, userId);
+    return await this.replyService.upvote(id, userId);
+  }
+
+  @Mutation()
+  @UseGuards(GqlAuthGuard)
+  async downvoteReply(@Args('id') id: string, @CurrentUser() user) {
+    const { id: userId } = user;
+    return await this.replyService.downvote(id, userId);
   }
 }

@@ -3,8 +3,9 @@ type Reply {
   created: String!
   comment: String!
   comments(page: Int, limit: Int): [Comment!]
-  numLikes: Int
-  likes: [String]
+  rating: Int
+  upvotes: [String]
+  downvotes: [String]
   author: User
 }
 
@@ -15,5 +16,6 @@ type Query {
 type Mutation {
   createReply(post: ID!, comment: String!): Reply
   deleteReply(id: ID!): Reply
-  likeReply(id: ID!): Reply
+  upvoteReply(id: ID!): Reply
+  downvoteReply(id: ID!): Reply
 }
