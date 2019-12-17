@@ -70,16 +70,16 @@ export class PostController {
     return this.postService.delete(id, userId);
   }
 
-  @Post(':id/like')
+  @Post(':id/upvote')
   @UseGuards(AuthGuard('jwt'))
-  likePost(@Param('id') id: string, @User('id') userId: string) {
-    return this.postService.like(id, userId);
+  upvotePost(@Param('id') id: string, @User('id') userId: string) {
+    return this.postService.upvote(id, userId);
   }
 
-  @Delete(':id/like')
+  @Delete(':id/downvote')
   @UseGuards(AuthGuard('jwt'))
-  unLikePost(@Param('id') id: string, @User('id') userId: string) {
-    return this.postService.like(id, userId);
+  downvotePost(@Param('id') id: string, @User('id') userId: string) {
+    return this.postService.downvote(id, userId);
   }
 
   @Post(':id/bookmark')

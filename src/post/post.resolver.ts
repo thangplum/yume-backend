@@ -84,9 +84,16 @@ export class PostResolver {
 
   @Mutation()
   @UseGuards(GqlAuthGuard)
-  async likePost(@Args('id') id: string, @CurrentUser() user) {
+  async upvotePost(@Args('id') id: string, @CurrentUser() user) {
     const { id: userId } = user;
-    return await this.postService.like(id, userId);
+    return await this.postService.upvote(id, userId);
+  }
+
+  @Mutation()
+  @UseGuards(GqlAuthGuard)
+  async downvotePost(@Args('id') id: string, @CurrentUser() user) {
+    const { id: userId } = user;
+    return await this.postService.downvote(id, userId);
   }
 
   @Mutation()

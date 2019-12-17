@@ -47,7 +47,11 @@ export class PostEntity {
 
   @ManyToMany(type => UserEntity, { cascade: true })
   @JoinTable()
-  likes: UserEntity[];
+  upvotes: UserEntity[];
+
+  @ManyToMany(type => UserEntity, { cascade: true })
+  @JoinTable()
+  downvotes: UserEntity[];
 
   @OneToMany(type => ReplyEntity, reply => reply.post, { cascade: true })
   replies: ReplyEntity[];

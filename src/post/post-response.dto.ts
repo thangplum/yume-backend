@@ -7,7 +7,8 @@ export class PostResponseDTO {
   caption: string;
   comment: string;
   author: UserResponseDTO;
-  likes?: [string];
-  numLikes?: number;
+  upvotes?: [string];
+  downvotes?: [string];
+  rating?: number;
   // replies?: Reply
 }

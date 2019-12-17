@@ -31,10 +31,17 @@ export class PostService {
     if (responseObject.author) {
       responseObject.author = post.author.toResponseObject(false);
     }
-    if (responseObject.likes) {
-      responseObject.numLikes = post.likes.length;
-      responseObject.likes = responseObject.likes.map(liker => liker.id);
+    if (responseObject.upvotes) {
+      responseObject.upvotes = responseObject.upvotes.map(
+        (voter: UserEntity) => voter.id,
+      );
     }
+    if (responseObject.downvotes) {
+      responseObject.downvotes = responseObject.downvotes.map(
+        (voter: UserEntity) => voter.id,
+      );
+    }
+    responseObject.rating = post.upvotes.length - post.downvotes.length;
     return responseObject;
   }
 
@@ -76,7 +83,7 @@ export class PostService {
     }
 
     const allPosts = await this.postRepository.find({
-      relations: ['author', 'likes', 'replies', 'category'],
+      relations: ['author', 'upvotes', 'downvotes', 'replies', 'category'],
       where: postIds,
       order: { created: 'DESC' },
       take: limit,
@@ -93,7 +100,7 @@ export class PostService {
     const postCount = await this.postRepository.count();
     const pages = Math.ceil(postCount / limit);
     const posts = await this.postRepository.find({
-      relations: ['author', 'likes', 'replies', 'category'],
+      relations: ['author', 'upvotes', 'downvotes', 'replies', 'category'],
       take: limit,
       skip: limit * (page - 1),
       order: newest && { created: 'DESC' },
@@ -129,7 +136,7 @@ export class PostService {
     const pages = Math.ceil(postCount / limit);
     const posts = await this.postRepository.find({
       where,
-      relations: ['author', 'likes'],
+      relations: ['author', 'upvotes', 'downvotes'],
       take: limit,
       skip: limit * (page - 1),
       order: newest && { created: 'DESC' },
@@ -152,7 +159,7 @@ export class PostService {
     const pages = Math.ceil(postCount / limit);
     const posts = await this.postRepository.find({
       where: { author: userId },
-      relations: ['likes'],
+      relations: ['upvotes', 'downvotes'],
       take: limit,
       skip: limit * (page - 1),
       order: newest && { created: 'DESC' },
@@ -197,7 +204,7 @@ export class PostService {
   async show(id: string): Promise<PostResponseDTO> {
     const post = await this.postRepository.find({
       where: { id },
-      relations: ['author', 'likes', 'replies', 'category'],
+      relations: ['author', 'upvotes', 'downvotes', 'replies', 'category'],
     });
     if (!post.length) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -208,7 +215,7 @@ export class PostService {
   async showBySlug(slug: string): Promise<PostResponseDTO> {
     const post = await this.postRepository.find({
       where: { slug },
-      relations: ['author', 'likes', 'category'],
+      relations: ['author', 'upvotes', 'downvotes', 'category'],
     });
     if (!post || !post.length) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -250,19 +257,52 @@ export class PostService {
     return this.toResponseObject(post);
   }
 
-  async like(id: string, userId: string) {
+  async upvote(id: string, userId: string) {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['author', 'likes', 'replies'],
+      relations: ['author', 'upvotes', 'downvotes', 'replies'],
     });
     if (!post) {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
     }
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (post.likes.filter(liker => liker.id === user.id).length > 0) {
-      post.likes = post.likes.filter(liker => liker.id !== user.id);
+
+    // check if post is already downvoted
+    if (post.downvotes.filter(voter => voter.id === user.id).length > 0) {
+      // if already downvoted, then remove downvote
+      post.downvotes = post.downvotes.filter(voter => voter.id !== user.id);
+    }
+    // check if post is already upvoted, and only upvote if not
+    if (post.upvotes.filter(voter => voter.id === user.id).length === 0) {
+      post.upvotes.push(user);
     } else {
-      post.likes.push(user);
+      post.upvotes = post.upvotes.filter(voter => voter.id !== user.id);
+    }
+    await this.postRepository.save(post);
+    return this.toResponseObject(post);
+  }
+
+  async downvote(id: string, userId: string) {
+    const post = await this.postRepository.findOne({
+      where: { id },
+      relations: ['author', 'upvotes', 'downvotes', 'replies'],
+    });
+    if (!post) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    // check if post is already upvoted
+    if (post.upvotes.filter(voter => voter.id === user.id).length > 0) {
+      // if upvoted remove the upvote
+      post.upvotes = post.upvotes.filter(voter => voter.id !== user.id);
+    }
+
+    // check if post is already downvoted, and only upvote if not
+    if (post.downvotes.filter(voter => voter.id === user.id).length === 0) {
+      post.downvotes.push(user);
+    } else {
+      post.downvotes = post.downvotes.filter(voter => voter.id !== user.id);
     }
     await this.postRepository.save(post);
     return this.toResponseObject(post);

@@ -6,8 +6,9 @@ type Post {
   comment: String!
   category: Category!
   author: User
-  numLikes: Int
-  likes: [String]
+  rating: Int
+  upvotes: [String]
+  downvotes: [String]
   slug: String!
   replies(page: Int, limit: Int): [Reply!]
 }
@@ -24,7 +25,8 @@ type Mutation {
   createPost(caption: String!, comment: String!, category: ID!): Post!
   updatePost(id: ID!, caption: String, comment: String): Post!
   deletePost(id: ID!): Post!
-  likePost(id: ID!): Post!
+  upvotePost(id: ID!): Post!
+  downvotePost(id: ID!): Post!
   bookmark(id: ID!): User!
   unbookmark(id: ID!): User!
 }
