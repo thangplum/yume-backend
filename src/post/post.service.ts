@@ -41,7 +41,11 @@ export class PostService {
         (voter: UserEntity) => voter.id,
       );
     }
-    responseObject.rating = post.upvotes.length - post.downvotes.length;
+    if (responseObject.upvotes && responseObject.downvotes) {
+      responseObject.rating = post.upvotes.length - post.downvotes.length;
+    } else {
+      responseObject.rating = 0;
+    }
     return responseObject;
   }
 
