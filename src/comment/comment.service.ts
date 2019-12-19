@@ -95,7 +95,7 @@ export class CommentService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    await this.commentRepositorty.remove(comment);
+    await this.commentRepositorty.delete({ id });
     return this.toResponseObject(comment);
   }
 
