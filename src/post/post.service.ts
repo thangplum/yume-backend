@@ -46,6 +46,9 @@ export class PostService {
     } else {
       responseObject.rating = 0;
     }
+    if (responseObject.commentRaw) {
+      responseObject.commentRaw = JSON.stringify(responseObject.commentRaw);
+    }
     return responseObject;
   }
 
@@ -196,8 +199,11 @@ export class PostService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    const parsedRawComment = JSON.parse(data.commentRaw);
     const post = await this.postRepository.create({
-      ...data,
+      caption: data.caption,
+      comment: data.comment,
+      commentRaw: parsedRawComment,
       author: user,
       category,
     });
@@ -240,7 +246,13 @@ export class PostService {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
     }
     this.ensureOwnership(post, userId);
-    await this.postRepository.update({ id }, data);
+    const parsedRawComment = JSON.parse(data.commentRaw);
+    const updatedPost = {
+      caption: data.caption,
+      comment: data.comment,
+      commentRaw: parsedRawComment,
+    };
+    await this.postRepository.update({ id }, updatedPost);
     post = await this.postRepository.findOne({
       where: { id },
       relations: ['author', 'replies'],

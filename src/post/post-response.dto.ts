@@ -6,6 +6,7 @@ export class PostResponseDTO {
   created: Date;
   caption: string;
   comment: string;
+  commentRaw: string;
   author: UserResponseDTO;
   upvotes?: [string];
   downvotes?: [string];

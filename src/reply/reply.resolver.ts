@@ -31,9 +31,10 @@ export class ReplyResolver {
   async createReply(
     @Args('post') postId: string,
     @Args('comment') comment: string,
+    @Args('commentRaw') commentRaw: string,
     @CurrentUser() user,
   ) {
-    const data: ReplyDTO = { comment };
+    const data: ReplyDTO = { comment, commentRaw };
     const { id: userId } = user;
     return await this.replyService.create(postId, userId, data);
   }

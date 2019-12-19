@@ -54,10 +54,11 @@ export class PostResolver {
   async createPost(
     @Args('caption') caption: string,
     @Args('comment') comment: string,
+    @Args('commentRaw') commentRaw: string,
     @Args('category') categoryId: string,
     @CurrentUser() user,
   ) {
-    const data: PostDTO = { caption, comment };
+    const data: PostDTO = { caption, comment, commentRaw };
     const { id: userId } = user;
     return await this.postService.create(userId, categoryId, data);
   }
@@ -68,9 +69,10 @@ export class PostResolver {
     @Args('id') id: string,
     @Args('caption') caption: string,
     @Args('comment') comment: string,
+    @Args('commentRaw') commentRaw: string,
     @CurrentUser() user,
   ) {
-    const data: PostDTO = { caption, comment };
+    const data: PostDTO = { caption, comment, commentRaw };
     const { id: userId } = user;
     return await this.postService.update(id, userId, data);
   }

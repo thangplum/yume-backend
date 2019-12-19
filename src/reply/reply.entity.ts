@@ -24,6 +24,9 @@ export class ReplyEntity {
   @Column('text')
   comment: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  commentRaw: any;
+
   @ManyToOne(type => UserEntity)
   @JoinTable()
   author: UserEntity;

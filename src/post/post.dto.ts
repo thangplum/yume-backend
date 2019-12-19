@@ -6,4 +6,7 @@ export class PostDTO {
 
   @IsString()
   comment: string;
+
+  @IsString()
+  commentRaw: string;
 }

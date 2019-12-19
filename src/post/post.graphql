@@ -4,6 +4,7 @@ type Post {
   created: String!
   caption: String!
   comment: String!
+  commentRaw: String
   category: Category!
   author: User
   rating: Int
@@ -22,7 +23,12 @@ type Query {
 }
 
 type Mutation {
-  createPost(caption: String!, comment: String!, category: ID!): Post!
+  createPost(
+    caption: String!
+    comment: String!
+    commentRaw: String!
+    category: ID!
+  ): Post!
   updatePost(id: ID!, caption: String, comment: String): Post!
   deletePost(id: ID!): Post!
   upvotePost(id: ID!): Post!

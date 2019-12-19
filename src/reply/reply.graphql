@@ -2,6 +2,7 @@ type Reply {
   id: ID!
   created: String!
   comment: String!
+  commentRaw: String
   comments(page: Int, limit: Int): [Comment!]
   rating: Int
   upvotes: [String]
@@ -14,7 +15,7 @@ type Query {
 }
 
 type Mutation {
-  createReply(post: ID!, comment: String!): Reply
+  createReply(post: ID!, comment: String!, commentRaw: String!): Reply
   deleteReply(id: ID!): Reply
   upvoteReply(id: ID!): Reply
   downvoteReply(id: ID!): Reply

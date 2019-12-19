@@ -32,6 +32,9 @@ export class PostEntity {
   @Column('text')
   comment: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  commentRaw: any;
+
   @CreateDateColumn()
   created: Date;
 

@@ -30,7 +30,14 @@ export class ReplyService {
         voter => voter.id,
       );
     }
-    responseObject.rating = reply.upvotes.length - reply.downvotes.length;
+    if (responseObject.upvotes && responseObject.downvotes) {
+      responseObject.rating = reply.upvotes.length - reply.downvotes.length;
+    } else {
+      responseObject.rating = 0;
+    }
+    if (responseObject.commentRaw) {
+      responseObject.commentRaw = JSON.stringify(responseObject.commentRaw);
+    }
     return responseObject;
   }
 
@@ -64,8 +71,10 @@ export class ReplyService {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
+    const parsedRawComment = JSON.parse(data.commentRaw);
     const reply = await this.replyRepository.create({
-      ...data,
+      comment: data.comment,
+      commentRaw: parsedRawComment,
       post,
       author: user,
     });
@@ -98,7 +107,7 @@ export class ReplyService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    await this.replyRepository.remove(reply);
+    await this.replyRepository.delete({ id });
     return this.toResponseObject(reply);
   }
 
