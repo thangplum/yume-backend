@@ -15,6 +15,7 @@ import { ReplyModule } from './reply/reply.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { CommentModule } from './comment/comment.module';
 import { CategoryModule } from './category/category.module';
+import { FlagModule } from './flag/flag.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { CategoryModule } from './category/category.module';
     ReplyModule,
     CommentModule,
     CategoryModule,
+    FlagModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,0 +1,15 @@
+type Flag {
+  id: ID!
+  post: Post!
+  author: User!
+  created: String!
+  reason: String!
+}
+
+type Query {
+  flags: [Flag!]
+}
+
+type Mutation {
+  createFlag(post: ID!, reason: String!): Flag!
+}
