@@ -16,10 +16,18 @@ import * as jwt from 'jsonwebtoken';
 import { UserResponseDTO } from './dto/user-response.dto';
 import { PostEntity } from '../post/post.entity';
 
+export enum UserPermissions {
+  USER,
+  ADMIN,
+}
+
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ type: 'enum', enum: UserPermissions, nullable: true })
+  permission: UserPermissions;
 
   @Column({
     type: 'text',

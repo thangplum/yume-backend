@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity, UserPermissions } from './user.entity';
 import { Repository, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRegisterDTO } from './dto/user-register.dto';
 import { UserLoginDTO } from './dto/user-login.dto';
@@ -55,7 +55,11 @@ export class UserService {
     if (user) {
       throw new HttpException('Username is taken', HttpStatus.BAD_REQUEST);
     }
-    user = await this.userRepository.create(data);
+
+    user = await this.userRepository.create({
+      ...data,
+      permission: UserPermissions.USER,
+    });
     await this.userRepository.save(user);
     return user.toResponseObject();
   }
