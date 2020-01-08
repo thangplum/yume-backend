@@ -96,7 +96,7 @@ export class ReplyService {
   async deleteReply(id: string, userId: string) {
     const reply = await this.replyRepository.findOne({
       where: { id },
-      relations: ['author', 'post'],
+      relations: ['author', 'post', 'comments'],
     });
     if (!reply) {
       throw new HttpException('Reply does not exist', HttpStatus.BAD_REQUEST);

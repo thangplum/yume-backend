@@ -27,7 +27,9 @@ export class CommentEntity {
   author: UserEntity;
 
   @Index()
-  @ManyToOne(type => ReplyEntity, reply => reply.comments)
+  @ManyToOne(type => ReplyEntity, reply => reply.comments, {
+    onDelete: 'CASCADE',
+  })
   reply: ReplyEntity;
 
   @ManyToMany(type => UserEntity, { cascade: true })
