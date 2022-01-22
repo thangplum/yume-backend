@@ -38,7 +38,7 @@
     "graphql-tools": "^4.0.6",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.7",
-    "nanoid": "^2.1.7",
+    "nanoid": "^3.1.31",
     "passport": "^0.4.0",
     "passport-google-token": "^0.1.2",
     "passport-jwt": "^4.0.0",
